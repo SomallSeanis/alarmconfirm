@@ -1,15 +1,18 @@
 package com.ucd.alarm.confirm.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ucd.alarm.confirm.domain.UserTestDO;
 import com.ucd.alarm.confirm.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.JedisCluster;
 
 import javax.annotation.Resource;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @ClassName: RedisTestController
@@ -23,15 +26,17 @@ import java.util.Date;
 @RequestMapping("/redis")
 @RestController
 public class RedisTestController {
-    @Autowired
-    JedisCluster jedisCluster;
+
     /** 测试 redis中存储的过期时间60s */
     private static int ExpireTime = 60;
+
+    @Autowired
+    JedisCluster jedisCluster;
 
     @Resource
     private RedisUtil redisUtil;
 
-    @RequestMapping("set")
+    @GetMapping("set")
     public boolean redisset(String key, String value){
         UserTestDO userTestDO = new UserTestDO();
         userTestDO.setId(Long.valueOf(1));
@@ -40,16 +45,35 @@ public class RedisTestController {
         userTestDO.setAge(20);
         userTestDO.setCreateTime(new Date());
 
-        //return redisUtil.set(key,userTestDO,ExpireTime);
 
         return redisUtil.set(key,value);
     }
 
-    @RequestMapping("get")
-    public Object redisget(String key){
-        System.out.println("==============="+jedisCluster.get(key));
-     //   System.out.println("==============="+redisUtil.get(key));
-        return jedisCluster.get(key);
+    @GetMapping("get")
+    public Object redisget(String key, String item) throws JsonProcessingException {
+//        Collection<Object> strings = new ArrayList<>();
+//        strings.add("2_6579200");
+//        strings.add("2_4983");
+        Collection<Object> strings1 = new ArrayList<>();
+        List<Map<String,Object>> list = new ArrayList<>();
+        Map<String,Object> map =new HashMap<>();
+        Map<String,Object> map1 =new HashMap<>();
+        map.put("2_6579200","2_6579200");
+        map1.put("2_4983","2_6579200");
+        list.add(map);
+        list.add(map1);
+        strings1.add(list);
+        List<Object> values = redisUtil.hMultiGet(key,strings1);
+        int i = 0;
+        for (Object k: values) {
+            // k is the key
+            // and here is the value corresponding to the key k
+            System.out.println(k.toString());
+
+        }
+
+        jedisCluster.hmget("db0","2_6579200,2_4983");
+        return null;
 
     }
 

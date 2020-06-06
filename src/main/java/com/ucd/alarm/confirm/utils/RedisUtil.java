@@ -1,12 +1,13 @@
 package com.ucd.alarm.confirm.utils;
 
 import com.ucd.alarm.confirm.constants.Status;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,10 +23,11 @@ import java.util.concurrent.TimeUnit;
  **/
 @Component
 public class RedisUtil {
-    @Autowired
+    @Qualifier("redisClusterTemplate")
     private RedisTemplate<String, Object> redisTemplate;
 
-    public RedisUtil(RedisTemplate<String, Object> redisTemplate) {
+
+    public RedisUtil(@Qualifier("redisClusterTemplate") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
@@ -599,5 +601,17 @@ public class RedisUtil {
     }
 
     //=========BoundListOperations 用法 End============
+
+    /**
+     * 获取多个Hash中的数据
+     *
+     * @param key Redis键
+     * @param hKeys Hash键集合
+     * @return Hash对象集合
+     */
+    public  List<Object> hMultiGet(final String key, final Collection<Object> hKeys) {
+
+        return redisTemplate.opsForHash().multiGet(key, hKeys);
+    }
 
 }
