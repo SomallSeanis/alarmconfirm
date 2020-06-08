@@ -8,6 +8,8 @@ import com.ucd.alarm.confirm.domain.UserTestDO;
 import com.ucd.alarm.confirm.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.web.bind.annotation.*;
 import redis.clients.jedis.JedisCluster;
 
@@ -30,8 +32,8 @@ public class RedisTestController {
     /** 测试 redis中存储的过期时间60s */
     private static int ExpireTime = 60;
 
-    @Autowired
-    JedisCluster jedisCluster;
+    //@Autowired
+   // JedisCluster jedisCluster;
 
     @Resource
     private RedisUtil redisUtil;
@@ -51,34 +53,63 @@ public class RedisTestController {
 
     @GetMapping("get")
     public Object redisget(String key, String item) throws JsonProcessingException {
-//        Collection<Object> strings = new ArrayList<>();
-//        strings.add("2_6579200");
-//        strings.add("2_4983");
         Collection<Object> strings1 = new ArrayList<>();
         List<Map<String,Object>> list = new ArrayList<>();
-        Map<String,Object> map =new HashMap<>();
-        Map<String,Object> map1 =new HashMap<>();
-        map.put("2_6579200","2_6579200");
-        map1.put("2_4983","2_6579200");
-        list.add(map);
-        list.add(map1);
-        strings1.add(list);
-        List<Object> values = redisUtil.hMultiGet(key,strings1);
+        strings1.add(key);
+        strings1.add(item);
+        List<Object> values = redisUtil.hMultiGet("db0",strings1);
         int i = 0;
         for (Object k: values) {
-            // k is the key
-            // and here is the value corresponding to the key k
             System.out.println(k.toString());
-
         }
 
-        jedisCluster.hmget("db0","2_6579200,2_4983");
-        return null;
+        /** 单个hashkey管道查询方案 */
+        List<String> keys = new ArrayList<>();
+        List<String> hashKeys = new ArrayList<>();
+        List<Map<String, String>> hashList = new ArrayList<Map<String, String>>();
 
+        keys.add("db0");
+        hashKeys.add(key);
+        hashKeys.add(item);
+        List<Object> list2 = redisUtil.pipelinedOne(keys,hashKeys);
+            for (Object k: list2) {
+            // k is the key
+            // and here is the value corresponding to the key k
+            System.out.println("单个hashhey查询方案"+k.toString());
+
+        }
+        return null;
     }
+
 
     @RequestMapping("expire")
     public boolean expire(String key){
         return redisUtil.expire(key,ExpireTime);
     }
+
+    /**
+     * @author Crayon
+     * @Description 获取批量keys对应的列表中，指定的hash键值对列表       
+     * @date 2020/6/7 1:02 下午 
+     * @params []
+     * @exception  
+     * @return java.util.List<java.util.Map<java.lang.String,java.lang.String>>  
+     */
+    @PostMapping("getSel")
+    public List<Map<String, String>> getSelectiveHashsList(String key1,String key2){
+        List<String> keys = new ArrayList<>();
+        List<String> hashKeys = new ArrayList<>();
+        List<Map<String, String>> hashList = new ArrayList<Map<String, String>>();
+        keys.add("db0");
+        hashKeys.add(key1);
+        hashKeys.add(key2);
+        List<Object> list1 = Collections.singletonList(redisUtil.pipelinedList(keys, hashKeys));
+        for (Object k: list1) {
+            // k is the key
+            // and here is the value corresponding to the key k
+            System.out.println("批量hashhey查询方案"+k.toString());
+        }
+        return null;
+    }
+
 }
