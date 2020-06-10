@@ -4,10 +4,18 @@ spring:
   application:
     name: alarm-confirm
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://10.50.238.161:1433;DatabaseName=Alarm
-    username: sa
-    password: 1IllI1|1Il
+    hikari:
+      jdbc-url: jdbc:sqlserver://10.50.238.161:1433;DatabaseName=Alarm
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      username: sa
+      password: 1IllI1|1Il
+      minimum-idle: 29
+      maximum-pool-size: 58
+      auto-commit: true
+      idle-timeout: 0
+      pool-name: DatebookHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 10000
   redis:
    lettuce:
      pool:
