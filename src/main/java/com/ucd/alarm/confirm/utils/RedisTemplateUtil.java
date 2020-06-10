@@ -2,21 +2,18 @@ package com.ucd.alarm.confirm.utils;
 
 import com.ucd.alarm.confirm.constants.Status;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.connection.RedisConnection;
-import org.springframework.data.redis.connection.StringRedisConnection;
+
 import org.springframework.data.redis.core.BoundListOperations;
-import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.core.SetOperations;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,128 +21,20 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName: RedisUtil
- * @Description: redisTemplate 封装工具类
+ * @Description: redisTemplate 封装工具类。根据对应需求调取合适方法
  * @Author: Crayon
  * @CreateDate: 2020/6/5 4:16 下午
  * @Version 1.0
  * @Copyright: Copyright©2018-2020 BJCJ Inc. All rights reserved.
  **/
 @Component
-public class RedisUtil {
-    @Qualifier("redisClusterLettuceTemplate")
+public class RedisTemplateUtil {
+    @Qualifier("redisTemplateLettuce")
     private RedisTemplate<String, Object> redisTemplate;
 
-    public RedisUtil(@Qualifier("redisClusterLettuceTemplate") RedisTemplate<String, Object> redisTemplate) {
+    public RedisTemplateUtil(@Qualifier("redisTemplateLettuce") RedisTemplate<String, Object> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
-
-
-    /**
-     * @return
-     * @throws
-     * @author Crayon
-     * @Description  批量管道查询
-     * @date 2020/6/7 1:07 下午
-     * @params
-     */
-    public List<Map<String, Object>> pipelinedList(List<String> keys, List<String> hashKeys) {
-        List<Map<String, Object>> hashList = new ArrayList<Map<String, Object>>();
-        List<Object> pipelinedList = redisTemplate.executePipelined(new RedisCallback<Object>() {
-            @Override
-            public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                // 自定义序列化
-                RedisSerializer redisSerializer = redisTemplate.getKeySerializer();
-                // 这种调用方式 需要使用StringRedisTemplate处理缓存模式
-                StringRedisConnection stringRedisConnection = (StringRedisConnection) connection;
-                for (String key : keys) {
-                    // List<String> 装成 String... fields ->hashKeys.toArray(new String[hashKeys.size()])
-                    // stringRedisConnection.hMGet(keyS.serialize(key), keyS.serialize(hashKeys.toArray(new String[hashKeys.size()])));
-                    // fixme 目前存在问题 List<String> hashKeys 转 byte数组
-                    System.out.println("输出hashkey"+redisSerializer.serialize(hashKeys.toArray(new String[hashKeys.size()])));
-                    System.out.println("输出key"+redisSerializer.serialize(key));
-                    connection.hMGet(redisSerializer.serialize(key),redisSerializer.serialize(hashKeys.toArray(new String[hashKeys.size()])));
-
-                }
-                return null;
-            }
-        },redisTemplate.getValueSerializer());
-
-        for (Object hashValueList : pipelinedList) {
-            Map<String, Object> map = new LinkedHashMap<String, Object>();
-            // 测试获取内容
-            System.out.println(hashValueList);
-            // todo 待处理 需要把Object类型转成List<List<String>> 类型 进行循环取值
-          /* for (int i = 0; i < hashValueList.size(); i++) {
-            map.put(hashKeys.get(i), hashValueList.get(i));
-           }*/
-            hashList.add(map);
-        }
-        return hashList;
-    }
-
-    public List<Object> pipelinedOne(List<String> keys, List<String> hashKeys) {
-
-        List<Object> redisResult = redisTemplate.executePipelined(
-                new RedisCallback<String>() {
-                    // 自定义序列化
-                    RedisSerializer keyS = redisTemplate.getKeySerializer();
-                    @Override
-                    public String doInRedis(RedisConnection redisConnection) throws DataAccessException {
-                        // 测试数据
-                        String key = "db0";
-                        String hashKey = "2_6579200";
-                        System.out.println("HashKey" + keyS.serialize(hashKey));
-                        System.out.println("key" + keyS.serialize(key));
-                        redisConnection.hGet(keyS.serialize(key), keyS.serialize(hashKey));
-                        return null;
-                    } // 自定义序列化
-                }, redisTemplate.getValueSerializer()
-        );
-        return redisResult;
-    }
-
-    public Map<String,Object> batchQueryByKeys(List<String> keys,Boolean useParallel) {
-        if(null == keys || keys.size() == 0 ){
-            return null;
-        }
-
-        if(null == useParallel){
-            useParallel = true;
-        }
-        List<Object> results = redisTemplate.executePipelined(
-                new RedisCallback<Object>() {
-                    @Override
-                    public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                        StringRedisConnection stringRedisConn = (StringRedisConnection)connection;
-                        for(String key:keys) {
-                            stringRedisConn.get(key);
-                        }
-                        return null;
-                    }
-                });
-        if(null == results || results.size() == 0 ){return null;}
-        Map<String,Object> resultMap  =  null;
-        if(useParallel){
-            Map<String,Object> resultMapOne  = Collections.synchronizedMap(new HashMap<String,Object>(16));
-            keys.parallelStream().forEach(t -> {
-                resultMapOne.put(t,results.get(keys.indexOf(t)));
-            });
-
-            resultMap = resultMapOne;
-
-        }else{
-
-            Map<String,Object> resultMapTwo  = new HashMap<>();
-
-            for(String t:keys){
-                resultMapTwo.put(t,results.get(keys.indexOf(t)));
-            }
-
-            resultMap = resultMapTwo;
-        }
-        return  resultMap;
-    }
-
 
     /**
      * 指定缓存失效时间
@@ -770,6 +659,56 @@ public class RedisUtil {
      */
     public List<Object> hMultiGet(final String key, final Collection<Object> hKeys) {
         return redisTemplate.opsForHash().multiGet(key, hKeys);
+    }
+
+    /**
+     * 对hash类型的数据操作
+     *
+     * @param
+     * @return
+     */
+    public HashOperations<String, String, Object> hashClusterOperations() {
+        return redisTemplate.opsForHash();
+    }
+
+    /**
+     * 对redis字符串类型数据操作
+     *
+     * @param
+     * @return
+     */
+    public ValueOperations<String, Object> valueClusterOperations() {
+        return redisTemplate.opsForValue();
+    }
+
+    /**
+     * 对链表类型的数据操作
+     *
+     * @param
+     * @return
+     */
+    public ListOperations<String, Object> listClusterOperations() {
+        return redisTemplate.opsForList();
+    }
+
+    /**
+     * 对无序集合类型的数据操作
+     *
+     * @param
+     * @return
+     */
+    public SetOperations<String, Object> setClusterOperations() {
+        return redisTemplate.opsForSet();
+    }
+
+    /**
+     * 对有序集合类型的数据操作
+     *
+     * @param
+     * @return
+     */
+    public ZSetOperations<String, Object> zSetClusterOperations() {
+        return redisTemplate.opsForZSet();
     }
 
 
