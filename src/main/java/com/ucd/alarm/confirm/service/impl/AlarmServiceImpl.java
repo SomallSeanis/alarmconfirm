@@ -67,10 +67,10 @@ public class AlarmServiceImpl implements AlarmService {
                     ((List<String>) obj).parallelStream().forEachOrdered(o -> {
                         JSONObject jsonObject = JSONObject.parseObject(o);
                         String type = jsonObject.getString(POINT_TYPE);
-                        this.getPointField(type, jsonObject);
-                        hashValueListParallelStream.add(type);
+                        String fieldName = this.getPointField(type, jsonObject);
+                        hashValueListParallelStream.add(fieldName);
                     });
-                    Map<String, String> resultMap = new LinkedHashMap<String, String>();
+                    Map<String, String> resultMap = new LinkedHashMap<String, String>(16);
                     if (hashKeys.size() != hashValueListParallelStream.size()) {
                         log.error("数据异常，缺数据");
                     }
