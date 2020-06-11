@@ -1,7 +1,8 @@
 package com.ucd.alarm.confirm.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ucd.alarm.confirm.service.AlarmRedisService;
+import com.ucd.alarm.confirm.enums.PointValueEnum;
+import com.ucd.alarm.confirm.service.AlarmService;
 import com.ucd.alarm.confirm.utils.StringRedisTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,11 @@ import java.util.Map;
 @Repository
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AlarmRedisServiceImpl implements AlarmRedisService {
+public class AlarmServiceImpl implements AlarmService {
+    /**
+     * 点值类型
+     */
+    public static final String POINT_TYPE = "t";
 
     @Resource
     private StringRedisTemplateUtil stringRedisTemplateUtil;
@@ -58,8 +63,8 @@ public class AlarmRedisServiceImpl implements AlarmRedisService {
                 if (obj instanceof List<?>) {
                     ((List<String>) obj).parallelStream().forEachOrdered(o -> {
                         JSONObject jsonObject = JSONObject.parseObject(o);
-                        String type = jsonObject.getString("t");
-                        // todo 测试 筛选出类型,根据类型获取点值部分还没写，先测试输出关系是否对应
+                        String type = jsonObject.getString(POINT_TYPE);
+                        this.getPointField(type,jsonObject);
                         hashValueListParallelStream.add(type);
                     });
                 }
@@ -72,7 +77,42 @@ public class AlarmRedisServiceImpl implements AlarmRedisService {
                 hashMapListStream.add(resultMap);
             });
         }
-
         return hashMapListStream;
+    }
+
+    /**
+     * @author Crayon
+     * @Description  根据类型判断 所要获取的字段的key值
+     * @date 2020/6/11 11:59 上午
+     * @params [type]
+     * @exception
+     * @return java.lang.String
+     */
+    private String getPointField(String type,JSONObject jsonObject){
+        String fieldName = null;
+        // 判断类型
+        if (PointValueEnum.INTEGER_I.getType().equals(type) || PointValueEnum.BOOLEAN_I.getType().equals(type)) {
+            fieldName = jsonObject.getString(PointValueEnum.INTEGER_I.getFieldName());
+        }
+
+        if (PointValueEnum.STRING_S.getType().equals(type) || PointValueEnum.ARRAY_S.getType().equals(type)) {
+            fieldName = jsonObject.getString(PointValueEnum.STRING_S.getFieldName());
+        }
+
+
+        if (PointValueEnum.LONG_L.getType().equals(type)) {
+            fieldName = jsonObject.getString(PointValueEnum.LONG_L.getFieldName());
+        }
+
+
+        if (PointValueEnum.DOUBLE_D.getType().equals(type)) {
+            fieldName = jsonObject.getString(PointValueEnum.DOUBLE_D.getFieldName());
+        }
+
+
+        if (PointValueEnum.DWORD.getType().equals(type)) {
+            fieldName = jsonObject.getString(PointValueEnum.DWORD.getFieldName());
+        }
+        return fieldName;
     }
 }

@@ -128,6 +128,9 @@ public class RedisTestController {
 
     @PostMapping("getStringSel")
     public Map<String, Object> getStringSelectiveHashsList(String key1, String key2, Boolean useParallel) {
+
+
+
         List<String> keys = new ArrayList<>();
         List<String> hashKeys = new ArrayList<>();
         List<Map<String, String>> hashMapListStream = new ArrayList<Map<String, String>>();

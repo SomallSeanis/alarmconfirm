@@ -1,6 +1,6 @@
 package com.ucd.alarm.confirm.utils;
 
-import com.ucd.alarm.confirm.constants.Status;
+import com.ucd.alarm.confirm.enums.Status;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import org.springframework.data.redis.core.BoundListOperations;

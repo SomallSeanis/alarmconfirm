@@ -38,7 +38,7 @@ public class StringRedisTemplateUtil {
      * @return java.util.List<java.util.Map < java.lang.String, java.lang.Object>>
      * @throws
      * @author Crayon
-     * @Description 批量 【pipleline管道查询】
+     * @Description 批量pipleline管道查询，
      * 使用StringRedisTemplate原因，批量HashKeys查询，使用管道方式速度快，StringRedisTemplate底层参数为String类型。
      * 存取的数据就是字符串类型数据的时候，使用StringRedisTemplate即可。
      * @date 2020/6/7 1:07 下午
@@ -152,7 +152,7 @@ public class StringRedisTemplateUtil {
      * @params [key]
      */
     public Map<Object, Object> findHash(String key) {
-        log.info("=================================== redis hash =========================================");
+        log.info("===================================redis hash =========================================");
         return stringRedisTemplate.opsForHash().entries(key);
     }
 

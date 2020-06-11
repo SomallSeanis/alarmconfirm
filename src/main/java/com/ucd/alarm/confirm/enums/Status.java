@@ -1,10 +1,10 @@
-package com.ucd.alarm.confirm.constants;
+package com.ucd.alarm.confirm.enums;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName: Status
- * @Description: 所有状态相关-枚举类
+ * @Description: 项目中-所有状态相关-枚举类
  * @Author: Crayon
  * @CreateDate: 2020/6/5 4:41 下午
  * @Version 1.0
@@ -14,10 +14,9 @@ public abstract class Status {
     /**
      * 过期时间相关枚举
      */
-    public static enum ExpireEnum{
+    public static enum ExpireEnum {
         // todo 将设置 某些数据有效期为xx天 - 暂时不用
-        UNREAD_MSG(30L, TimeUnit.DAYS)
-        ;
+        UNREAD_MSG(30L, TimeUnit.DAYS);
         /**
          * 过期时间
          */
@@ -40,4 +39,5 @@ public abstract class Status {
             return timeUnit;
         }
     }
+
 }
