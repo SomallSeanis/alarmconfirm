@@ -51,44 +51,51 @@ public class AlarmServiceImpl implements AlarmService {
      * @params [redisKeys, hashKeys]
      */
     @Override
-    public List<Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) {
+    public Map<String, Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) throws Exception {
         List<Map<String, String>> hashMapListStream = new ArrayList<Map<String, String>>();
         // 查询告警缓存数据
         List<Object> alarmRedisList = stringRedisTemplateUtil.pipelinedList(redisKeys, hashKeys);
         // todo 测试过后再启用此方法
         //Optional.ofNullable(alarmRedisList);
-        List<String> hashValueListParallelStream = new ArrayList<>();
+        Map<String, Map<String, String>> hashMapMapStream = new LinkedHashMap<>(16);
+        // List<Object> = List<List<String>>
         if (!ObjectUtils.isEmpty(alarmRedisList)) {
             alarmRedisList.forEach(obj -> {
+                List<String> hashValueListParallelStream = new ArrayList<>();
                 if (obj instanceof List<?>) {
+                    // obj = List<String>  redis中的Value值 JSON对象
                     ((List<String>) obj).parallelStream().forEachOrdered(o -> {
                         JSONObject jsonObject = JSONObject.parseObject(o);
                         String type = jsonObject.getString(POINT_TYPE);
-                        this.getPointField(type,jsonObject);
+                        this.getPointField(type, jsonObject);
                         hashValueListParallelStream.add(type);
                     });
-                }
-                Map<String, String> resultMap = new LinkedHashMap<String, String>();
-                if (hashKeys.size() == hashValueListParallelStream.size()) {
+                    Map<String, String> resultMap = new LinkedHashMap<String, String>();
+                    if (hashKeys.size() != hashValueListParallelStream.size()) {
+                        log.error("数据异常，缺数据");
+                    }
                     for (int i = 0; i < hashValueListParallelStream.size(); i++) {
                         resultMap.put(hashKeys.get(i), hashValueListParallelStream.get(i));
                     }
+                    hashMapListStream.add(resultMap);
                 }
-                hashMapListStream.add(resultMap);
             });
+            for (int i = 0; i < redisKeys.size(); i++) {
+                hashMapMapStream.put(redisKeys.get(i), hashMapListStream.get(i));
+            }
         }
-        return hashMapListStream;
+        return hashMapMapStream;
     }
 
     /**
+     * @return java.lang.String
+     * @throws
      * @author Crayon
-     * @Description  根据类型判断 所要获取的字段的key值
+     * @Description 根据类型判断 所要获取的字段的key值
      * @date 2020/6/11 11:59 上午
      * @params [type]
-     * @exception
-     * @return java.lang.String
      */
-    private String getPointField(String type,JSONObject jsonObject){
+    private String getPointField(String type, JSONObject jsonObject) {
         String fieldName = null;
         // 判断类型
         if (PointValueEnum.INTEGER_I.getType().equals(type) || PointValueEnum.BOOLEAN_I.getType().equals(type)) {

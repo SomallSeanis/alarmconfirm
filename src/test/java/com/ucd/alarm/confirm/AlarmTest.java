@@ -31,11 +31,14 @@ public class AlarmTest {
 
     @Test
     public void parallelStreamTest() {
-        List<String> keys = new ArrayList<>();
         List<String> hashKeys = new ArrayList<>();
         List<Map<String, String>> hashMapListStream = new ArrayList<Map<String, String>>();
         List<Map<String, String>> hashMapList = new ArrayList<Map<String, String>>();
+        List<String> keys = new ArrayList<>();
+
         keys.add("db0");
+        keys.add("db1");
+
 /*
         hashKeys.add(key1);
         hashKeys.add(key2);
@@ -49,8 +52,16 @@ public class AlarmTest {
         hashKeys.add("2_6875900");
         hashKeys.add("2_54016");
 
-        List<Map<String, String>> mapList = alarmService.hashMapListStream(keys, hashKeys);
+        Map<String, Map<String, String>> mapList = null;
+        try {
+            mapList = alarmService.hashMapListStream(keys, hashKeys);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+
+        System.out.println("=================" + mapList.toString());
+        System.out.println("=================" + mapList.size());
 
         // parallelStream数据测试
         List<String> list1 = new ArrayList<>();

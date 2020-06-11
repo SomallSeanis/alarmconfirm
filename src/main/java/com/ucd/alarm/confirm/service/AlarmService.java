@@ -21,7 +21,6 @@ public interface AlarmService {
      * @date 2020/6/10 6:21 下午
      * @params [redisKeys, hashKeys]
      */
-    List<Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys);
-
+    Map<String,Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) throws Exception;
 
 }
