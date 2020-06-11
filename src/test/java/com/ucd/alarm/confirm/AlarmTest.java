@@ -1,7 +1,7 @@
 package com.ucd.alarm.confirm;
 
 import com.ucd.alarm.confirm.service.AlarmService;
-import com.ucd.alarm.confirm.task.AlarmTaskService;
+import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

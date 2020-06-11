@@ -66,7 +66,7 @@ public class TheardConfig implements AsyncConfigurer {
     @Bean(destroyMethod = "shutdown", name = "alarmTaskScheduler")
     public ThreadPoolTaskScheduler alarmTaskScheduler(){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(10);
+        scheduler.setPoolSize(29);
         scheduler.setThreadNamePrefix("alarmTask-");
         scheduler.setAwaitTerminationSeconds(60);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);

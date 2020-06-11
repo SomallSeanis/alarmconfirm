@@ -2,14 +2,10 @@ package com.ucd.alarm.confirm.config;
 
 import com.ucd.alarm.confirm.service.AlarmRealTimeInfosService;
 import com.ucd.alarm.confirm.service.AlarmRuleService;
-import com.ucd.alarm.confirm.task.AlarmTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * @ClassName: CommandLineRunnerImpl
@@ -28,11 +24,14 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
     @Autowired
     AlarmRuleService alarmRuleService;
 
+    /**todo 修改线程模式为FutureTask，获取线程执行结果，然后执行定时任务*/
+    public static Boolean isDown  = false;
+
     @Override
-    @Async("defaultThreadPool")
     public void run(String... args) throws Exception {
         alarmRealTimeInfosService.getAlarmLists();
         alarmRuleService.getAlarmRuleLists();
+        isDown=true;
     }
 
 }

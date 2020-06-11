@@ -1,5 +1,9 @@
 package com.ucd.alarm.confirm.utils;
 
+import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
+import com.ucd.alarm.confirm.entity.AlarmRule;
+
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,65 +18,65 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MemoryCacheUtils {
 
     /**AlarmList容器*/
-    private static final Map<String, Object> STATION_FIRST_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SECOND_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_THIRD_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FOURTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FIFTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SIXTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_EIGHTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_NINTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_ELEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWELFTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_THIRTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FOURTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FIFTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SIXTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SEVENTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_EIGHTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_NINETEENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTIETH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_FIRST_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_SECOND_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_THIRD_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_FOURTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_FIFTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_SIXTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_SEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_EIGHTH_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_NINTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_FIRST_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_SECOND_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRD_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_FOURTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_FIFTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_SIXTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_SEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_EIGHTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_NINTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_ELEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWELFTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_FOURTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_FIFTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_SIXTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_SEVENTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_EIGHTEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_NINETEENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTIETH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_FIRST_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_SECOND_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_THIRD_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_FOURTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_FIFTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_SIXTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_SEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_EIGHTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_NINTH_CACHE_DATA = new ConcurrentHashMap<>();
     /**AlarmRule容器*/
-    private static final Map<String, Object> STATION_FIRST_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SECOND_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_THIRD_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FOURTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FIFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SIXTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_EIGHTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_NINTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_ELEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWELFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_THIRTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FOURTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_FIFTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SIXTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_SEVENTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_EIGHTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_NINETEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTIETH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_FIRST_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_SECOND_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_THIRD_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_FOURTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_FIFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_SIXTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_SEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_EIGHTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
-    private static final Map<String, Object> STATION_TWENTY_NINTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_FIRST_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_SECOND_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_THIRD_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_FOURTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_FIFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_SIXTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_SEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_EIGHTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_NINTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_ELEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWELFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_THIRTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_FOURTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_FIFTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_SIXTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_SEVENTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_EIGHTEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_NINETEENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTIETH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_FIRST_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_SECOND_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_THIRD_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_FOURTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_FIFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_SIXTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_SEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_EIGHTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, AlarmRule> STATION_TWENTY_NINTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
 
     /**
      * @throws
@@ -80,8 +84,8 @@ public class MemoryCacheUtils {
      * @author: wangweitao
      * @date: 2019/3/15 9:47
      */
-    public static int getDataSize(Map<String, Object> map) {
-        return map.size();
+    public static int getDataSize(Map<String, List<AlarmRealTimeInfos>> listMap) {
+        return listMap.size();
     }
 
     /**
@@ -92,7 +96,7 @@ public class MemoryCacheUtils {
      * @author: wangweitao
      * @date: 2019/3/15 9:47
      */
-    public static <T> void setData(String key,Object data,Map<String, Object> map) {
+    public static <T> void setData(String key,List<AlarmRealTimeInfos> data,Map<String, List<AlarmRealTimeInfos>> map) {
         map.put(key, data);
     }
 
@@ -104,7 +108,7 @@ public class MemoryCacheUtils {
      * @author: wangweitao
      * @date: 2019/3/15 9:47
      */
-    public static void clear(String key,Map<String, Object> map) {
+    public static void clear(String key,Map<String, List<AlarmRealTimeInfos>> map) {
         map.remove(key);
     }
 
@@ -116,11 +120,57 @@ public class MemoryCacheUtils {
      * @author: wangweitao
      * @date: 2019/3/15 9:47
      */
-    public static void clearAll(Map<String, Object> map) {
+    public static void clearAll(Map<String, List<AlarmRealTimeInfos>> map) {
         map.clear();
     }
 
-    public static Map<String, Object> getMapByStationId(int stationId) {
+    /**
+     * @throws
+     * @Description: 获取集合大小
+     * @author: wangweitao
+     * @date: 2019/3/15 9:47
+     */
+    public static int getRuleDataSize(Map<String, AlarmRule> map) {
+        return map.size();
+    }
+
+    /**
+     * @throws
+     * @Description: 新增缓存数据
+     * @param: [key, data, expire]
+     * @return: void
+     * @author: wangweitao
+     * @date: 2019/3/15 9:47
+     */
+    public static <T> void setRuleData(String key,AlarmRule data,Map<String, AlarmRule> map) {
+        map.put(key, data);
+    }
+
+    /**
+     * @throws
+     * @Description: 根据key删除数据
+     * @param: [key]
+     * @return: void
+     * @author: wangweitao
+     * @date: 2019/3/15 9:47
+     */
+    public static void clearRule(String key,Map<String, AlarmRule> map) {
+        map.remove(key);
+    }
+
+    /**
+     * @throws
+     * @Description: 清空缓存容器
+     * @param: []
+     * @return: void
+     * @author: wangweitao
+     * @date: 2019/3/15 9:47
+     */
+    public static void clearAllRule(Map<String, AlarmRule> map) {
+        map.clear();
+    }
+
+    public static Map<String,  List<AlarmRealTimeInfos>> getMapByStationId(int stationId) {
         switch (stationId) {
             case 1:
                 return STATION_FIRST_CACHE_DATA;
@@ -185,7 +235,7 @@ public class MemoryCacheUtils {
         }
         return new ConcurrentHashMap<>();
     }
-    public static Map<String, Object> getRuleMapByStationId(int stationId) {
+    public static Map<String, AlarmRule> getRuleMapByStationId(int stationId) {
         switch (stationId) {
             case 1:
                 return STATION_FIRST_RULE_CACHE_DATA;

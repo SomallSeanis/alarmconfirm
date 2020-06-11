@@ -2,7 +2,7 @@ package com.ucd.alarm.confirm.service.impl;
 
 import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.service.AlarmRuleService;
-import com.ucd.alarm.confirm.task.AlarmTaskService;
+import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmRuleServiceImpl implements AlarmRuleService {
 
-    public  final AlarmTaskService alarmTaskService;
+    public final AlarmTaskService alarmTaskService;
 
     @Override
     public List<Map<String, Object>> getAlarmRuleLists() throws InterruptedException {
@@ -35,7 +35,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         Thread.sleep(20000L);
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++) {
             Thread.sleep(10000L);
-            System.out.println("RuleMap"+i+":"+MemoryCacheUtils.getDataSize(MemoryCacheUtils.getRuleMapByStationId(i)));
+            System.out.println("RuleMap"+i+":"+MemoryCacheUtils.getRuleDataSize(MemoryCacheUtils.getRuleMapByStationId(i)));
         }
         return null;
     }

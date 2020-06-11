@@ -2,14 +2,11 @@ package com.ucd.alarm.confirm.service.impl;
 
 import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.service.AlarmRealTimeInfosService;
-import com.ucd.alarm.confirm.task.AlarmTaskService;
+import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmRealTimeInfosServiceImpl implements AlarmRealTimeInfosService {
 
-    public  final  AlarmTaskService alarmTaskService;
+    public final AlarmTaskService alarmTaskService;
 
 
     @Override

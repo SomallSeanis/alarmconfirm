@@ -1,4 +1,4 @@
-package com.ucd.alarm.confirm.task;
+package com.ucd.alarm.confirm.threadtask;
 
 import com.ucd.alarm.confirm.constants.AlarmRuleSqlCacheConstants;
 import com.ucd.alarm.confirm.constants.AlarmSqlCacheConstants;
@@ -41,7 +41,7 @@ public class AlarmTaskService {
     public void getAlarmListByStationId(int stationId) {
         //根据站ID查询对应SQL
         String sql = AlarmSqlCacheConstants.getSqlByStationId(stationId);
-        Map<String, Object> resultMap = MemoryCacheUtils.getMapByStationId(stationId);
+        Map<String, List<AlarmRealTimeInfos>> resultMap = MemoryCacheUtils.getMapByStationId(stationId);
         //根据站ID查询告警
         jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRealTimeInfos>>() {
             @Override
@@ -59,7 +59,7 @@ public class AlarmTaskService {
                     alarmRealTimeInfos.setAlarmSource("SQL");
 
                     if (resultMap.containsKey(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"))) {
-                        List<AlarmRealTimeInfos> tmpList = (List<AlarmRealTimeInfos>) resultMap.get(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"));
+                        List<AlarmRealTimeInfos> tmpList = resultMap.get(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"));
                         tmpList.add(alarmRealTimeInfos);
                         resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), tmpList);
                     } else {
@@ -67,7 +67,6 @@ public class AlarmTaskService {
                         alarmList.add(alarmRealTimeInfos);
                         resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), alarmList);
                     }
-
                 }
                 return list;
             }
@@ -81,7 +80,7 @@ public class AlarmTaskService {
     @Async("defaultThreadPool")
     public void getAlarmRuleListByStationId(int stationId) {
         String sql = AlarmRuleSqlCacheConstants.getSqlByStationId(stationId);
-        Map<String, Object> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
+        Map<String, AlarmRule> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
         //根据站ID查询告警
         List<AlarmRule> mapList = jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRule>>() {
 
