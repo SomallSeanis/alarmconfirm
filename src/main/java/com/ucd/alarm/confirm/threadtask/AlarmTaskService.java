@@ -80,7 +80,7 @@ public class AlarmTaskService {
     @Async("defaultThreadPool")
     public void getAlarmRuleListByStationId(int stationId) {
         String sql = AlarmRuleSqlCacheConstants.getSqlByStationId(stationId);
-        Map<String, AlarmRule> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
+        Map<String,  List<AlarmRule>> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
         //根据站ID查询告警
         List<AlarmRule> mapList = jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRule>>() {
 
@@ -98,7 +98,15 @@ public class AlarmTaskService {
                     alarmRule.setAlarmType(resultSet.getInt("AlarmType"));
                     alarmRule.setAlarmSource("SQL");
                     list.add(alarmRule);
-                    resultMap.put(resultSet.getString("Id"), alarmRule);
+                    if (resultMap.containsKey(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"))) {
+                        List<AlarmRule> tmpList = resultMap.get(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"));
+                        tmpList.add(alarmRule);
+                        resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), tmpList);
+                    } else {
+                        List<AlarmRule> alarmList = new ArrayList<>();
+                        alarmList.add(alarmRule);
+                        resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), alarmList);
+                    }
                 }
                 return list;
             }

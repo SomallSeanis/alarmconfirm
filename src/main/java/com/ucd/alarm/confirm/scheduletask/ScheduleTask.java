@@ -42,7 +42,7 @@ public class ScheduleTask {
             //获取告警表Map
             Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(1);
             //获取规则表Map
-            Map<String, AlarmRule> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(1);
+            Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(1);
             //获取所有点值key
             List<String> list = mapByStationId.keySet().stream().collect(Collectors.toList());
             //查询点值
