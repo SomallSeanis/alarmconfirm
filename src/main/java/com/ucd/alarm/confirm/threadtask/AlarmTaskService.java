@@ -52,9 +52,10 @@ public class AlarmTaskService {
                     AlarmRealTimeInfos alarmRealTimeInfos = new AlarmRealTimeInfos();
                     alarmRealTimeInfos.setStationId(resultSet.getInt("StationId"));
                     alarmRealTimeInfos.setPointId(resultSet.getInt("PointId"));
-                    alarmRealTimeInfos.setAlarmLevel(resultSet.getInt("AlarmOrder"));
+                    alarmRealTimeInfos.setAlarmOrder(resultSet.getInt("AlarmOrder"));
                     alarmRealTimeInfos.setAlarmRuleId(resultSet.getString("AlarmRuleId"));
                     alarmRealTimeInfos.setMaxTime(resultSet.getString("MaxTime"));
+                    alarmRealTimeInfos.setAlarmType(resultSet.getInt("AlarmType"));
                     alarmRealTimeInfos.setSpId(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"));
                     alarmRealTimeInfos.setAlarmSource("SQL");
 

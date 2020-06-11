@@ -42,7 +42,7 @@ public class AlarmRealTimeInfos implements  Serializable {
     /**
      * 告警等级
      */
-    private int alarmLevel;
+    private int alarmOrder;
     /**
      * 告警数据源
      */
@@ -51,5 +51,9 @@ public class AlarmRealTimeInfos implements  Serializable {
      * 告警产生最新时间
      */
     private String maxTime;
+    /**
+     * 告警产生最新时间
+     */
+    private int alarmType;
 
 }
