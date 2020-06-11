@@ -22,6 +22,6 @@ public interface AlarmRealTimeInfosService {
     * @exception
     * @date   2020/6/7 16:05
     */
-    List<Map<String,Object>> getAlarmLists();
+    List<Map<String,Object>> getAlarmLists() throws InterruptedException;
 
 }

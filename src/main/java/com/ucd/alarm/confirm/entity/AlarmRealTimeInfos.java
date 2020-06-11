@@ -40,7 +40,7 @@ public class AlarmRealTimeInfos implements  Serializable {
      */
     private String alarmRuleId;
     /**
-     * 告警登记
+     * 告警等级
      */
     private int alarmLevel;
     /**

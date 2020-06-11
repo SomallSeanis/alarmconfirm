@@ -3,6 +3,7 @@ package com.ucd.alarm.confirm.service.impl;
 import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.service.AlarmRealTimeInfosService;
 import com.ucd.alarm.confirm.task.AlarmTaskService;
+import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,9 +32,14 @@ public class AlarmRealTimeInfosServiceImpl implements AlarmRealTimeInfosService 
 
 
     @Override
-    public List<Map<String, Object>> getAlarmLists() {
+    public List<Map<String, Object>> getAlarmLists() throws InterruptedException {
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++){
             alarmTaskService.getAlarmListByStationId(i);
+        }
+        Thread.sleep(20000L);
+        for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++) {
+            Thread.sleep(10000L);
+            System.out.println("AlarmMap"+i+":"+MemoryCacheUtils.getDataSize(MemoryCacheUtils.getMapByStationId(i)));
         }
         return null;
     }
