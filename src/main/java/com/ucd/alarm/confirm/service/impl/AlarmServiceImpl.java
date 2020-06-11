@@ -24,7 +24,6 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -63,7 +62,7 @@ public class AlarmServiceImpl implements AlarmService {
      * @params [redisKeys, hashKeys]
      */
     @Override
-    public Map<String, Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) throws Exception {
+    public Map<String, Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys){
         List<Map<String, String>> hashMapListStream = new ArrayList<Map<String, String>>();
         // 查询告警缓存数据
         List<Object> alarmRedisList = stringRedisTemplateUtil.pipelinedList(redisKeys, hashKeys);
@@ -76,7 +75,7 @@ public class AlarmServiceImpl implements AlarmService {
                 List<String> hashValueListParallelStream = new ArrayList<>();
                 if (obj instanceof List<?>) {
                     // obj = List<String>  redis中的Value值 JSON对象
-                    ((List<String>) obj).parallelStream().forEachOrdered(o -> {
+                    ((List<String>) obj).stream().forEachOrdered(o -> {
                         JSONObject jsonObject = JSONObject.parseObject(o);
                         String type = jsonObject.getString(POINT_TYPE);
                         String fieldName = this.getPointField(type, jsonObject);
