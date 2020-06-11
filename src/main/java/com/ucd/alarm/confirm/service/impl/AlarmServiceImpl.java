@@ -50,7 +50,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    private AlarmRuleService alarmRuleService;
+    AlarmRuleService alarmRuleService;
 
     /**
      * @return java.util.List<java.util.Map < java.lang.String, java.lang.String>>
