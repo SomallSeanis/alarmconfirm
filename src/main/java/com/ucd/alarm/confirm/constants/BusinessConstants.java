@@ -9,6 +9,9 @@ package com.ucd.alarm.confirm.constants;
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
 public class BusinessConstants {
-
+    /**车站总数*/
     public static final Integer STATION_COUNT = 29;
+    /**超限告警类型*/
+    public static final Integer ALARM_LIMIT_TYPE = 0;
+
 }
