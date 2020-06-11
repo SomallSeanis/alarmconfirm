@@ -21,16 +21,16 @@ public interface AlarmService {
      * @date 2020/6/10 6:21 下午
      * @params [redisKeys, hashKeys]
      */
-    Map<String,Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) throws Exception;
+    Map<String, Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) throws Exception;
 
 
     /**
+     * @return java.lang.Boolean
+     * @throws
      * @author Crayon
      * @Description 修改各个车站最终设备告警等级结果
      * @date 2020/6/11 10:27 下午
      * @params []
-     * @exception
-     * @return java.lang.Boolean
      */
     Boolean updataAlarmLevelResult(Integer stationId) throws Exception;
 

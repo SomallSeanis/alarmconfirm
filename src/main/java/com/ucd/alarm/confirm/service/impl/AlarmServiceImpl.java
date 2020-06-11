@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -67,7 +68,7 @@ public class AlarmServiceImpl implements AlarmService {
         // 查询告警缓存数据
         List<Object> alarmRedisList = stringRedisTemplateUtil.pipelinedList(redisKeys, hashKeys);
         // todo 测试过后再启用此方法
-        //Optional.ofNullable(alarmRedisList);
+        // Optional.ofNullable(alarmRedisList.);
         Map<String, Map<String, String>> hashMapMapStream = new LinkedHashMap<>(16);
         // List<Object> = List<List<String>>
         if (!ObjectUtils.isEmpty(alarmRedisList)) {
@@ -99,15 +100,15 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     /**
-     * @author Crayon
-     * @Description 修改各个车站最终设备告警等级结果       
-     * @date 2020/6/11 10:31 下午 
-     * @params []
-     * @exception  
      * @return java.lang.Boolean
+     * @throws
+     * @author Crayon
+     * @Description 修改各个车站最终设备告警等级结果
+     * @date 2020/6/11 10:31 下午
+     * @params []
      */
     @Override
-    public Boolean updataAlarmLevelResult(Integer stationId) throws Exception{
+    public Boolean updataAlarmLevelResult(Integer stationId) throws Exception {
         // 获取告警表信息
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
 
@@ -117,39 +118,43 @@ public class AlarmServiceImpl implements AlarmService {
         // 获取告警信息表中的所有stationId_pointId
         List<String> listStationIdPointId = mapByStationId.keySet().stream().collect(Collectors.toList());
 
-            // 查询redis中所有点值信息
-            Map<String, Map<String, String>> stringMapMap = this.hashMapListStream(this.getRedisKeyList(), listStationIdPointId);
+        // 查询redis中所有点值信息
+        Map<String, Map<String, String>> stringMapMap = this.hashMapListStream(this.getRedisKeyList(), listStationIdPointId);
 
-            final Map<String, String> mapValue = stringMapMap.get(BusinessConstants.REDIS_KEY);
-            mapValue.forEach((stationIdPointId, pointValue) -> {
-                // 获取 对应告警规则数据
-                List<AlarmRealTimeInfos> alarmRealTimeInfos = mapByStationId.get(stationIdPointId);
-                // 获取maxTime
-                String maxTime = alarmRealTimeInfos.get(0).getMaxTime();
-                // 取出数据
-                List<Integer> alarmOrderList = alarmRealTimeInfos.parallelStream().map(AlarmRealTimeInfos::getAlarmOrder)
-                        .collect(Collectors.toList());
-                // 获取alarmOrder最大值
-                int alarmOrderMax = Collections.max(alarmOrderList);
+        if(ObjectUtils.isEmpty(stringMapMap)){
+            log.error("【{}】:此车站redis信息异常", stationId);
+            return false;
+        }
+        final Map<String, String> mapValue = stringMapMap.get("db0");
+        mapValue.forEach((stationIdPointId, pointValue) -> {
+            // 获取 对应告警规则数据
+            List<AlarmRealTimeInfos> alarmRealTimeInfos = mapByStationId.get(stationIdPointId);
+            // 获取maxTime
+            String maxTime = alarmRealTimeInfos.get(0).getMaxTime();
+            // 取出数据
+            List<Integer> alarmOrderList = alarmRealTimeInfos.parallelStream().map(AlarmRealTimeInfos::getAlarmOrder)
+                    .collect(Collectors.toList());
+            // 获取alarmOrder最大值
+            int alarmOrderMax = Collections.max(alarmOrderList);
 
-                alarmRealTimeInfos = alarmRealTimeInfos.parallelStream()
-                        .collect(Collectors.collectingAndThen(Collectors.toCollection(()
-                                -> new TreeSet<>(Comparator.comparing(AlarmRealTimeInfos::getAlarmType))),ArrayList::new));
-                // 如果为size 1 所有值相同
-                if(alarmRealTimeInfos.size() != 1){
-                    // 报异常 日志
-                    log.error("【{}】:告警类型不唯一,跳过本次操作",stationIdPointId);
-                    return;
-                }
-                // 获取告警类型
-                Integer alarmType = alarmRealTimeInfos.get(0).getAlarmType();
-                // 获取规则数据
-                List<AlarmRule> alarmRulesList = ruleMapByStationId.get(stationIdPointId);
-                // 根据当前告警类型获取告警规则数据
-                alarmRulesList = alarmRulesList.stream().filter(type -> type.getAlarmType() == alarmType).collect(Collectors.toList());
-                // 调取 判断告警等级接口
-                alarmRuleService.doRuleCheck(stationId,pointValue,alarmOrderMax,alarmType,maxTime,alarmRulesList);
-            });
+            alarmRealTimeInfos = alarmRealTimeInfos.parallelStream()
+                    .collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                            -> new TreeSet<>(Comparator.comparing(AlarmRealTimeInfos::getAlarmType))), ArrayList::new));
+            // 如果为size 1 所有值相同
+            if (alarmRealTimeInfos.size() != 1) {
+                // 报异常 日志
+                log.error("【{}】:告警类型不唯一,跳过本次操作", stationIdPointId);
+                return;
+            }
+            // 获取告警类型
+            Integer alarmType = alarmRealTimeInfos.get(0).getAlarmType();
+            // 获取规则数据
+            List<AlarmRule> alarmRulesList = ruleMapByStationId.get(stationIdPointId);
+            // 根据当前告警类型获取告警规则数据
+            alarmRulesList = alarmRulesList.stream().filter(type -> type.getAlarmType() == alarmType).collect(Collectors.toList());
+            // 调取 判断告警等级接口
+            alarmRuleService.doRuleCheck(stationId, pointValue, alarmOrderMax, alarmType, maxTime, alarmRulesList);
+        });
 
         return true;
     }
@@ -191,19 +196,18 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     /**
+     * @return java.util.List<java.lang.String>
+     * @throws
      * @author Crayon
      * @Description 所有有redis key
      * @date 2020/6/11 10:37 下午
      * @params []
-     * @exception
-     * @return java.util.List<java.lang.String>
      */
-    public List<String> getRedisKeyList(){
+    public List<String> getRedisKeyList() {
         List<String> list = new ArrayList<>();
         list.add(BusinessConstants.REDIS_KEY);
         return list;
     }
-
 
 
 }
