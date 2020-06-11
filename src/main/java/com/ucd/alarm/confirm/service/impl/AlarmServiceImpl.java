@@ -1,6 +1,7 @@
 package com.ucd.alarm.confirm.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
 import com.ucd.alarm.confirm.entity.AlarmRule;
 import com.ucd.alarm.confirm.enums.PointValueEnum;
@@ -119,7 +120,7 @@ public class AlarmServiceImpl implements AlarmService {
             // 查询redis中所有点值信息
             Map<String, Map<String, String>> stringMapMap = this.hashMapListStream(this.getRedisKeyList(), listStationIdPointId);
 
-            final Map<String, String> mapValue = stringMapMap.get("db0");
+            final Map<String, String> mapValue = stringMapMap.get(BusinessConstants.REDIS_KEY);
             mapValue.forEach((stationIdPointId, pointValue) -> {
                 // 获取 对应告警规则数据
                 List<AlarmRealTimeInfos> alarmRealTimeInfos = mapByStationId.get(stationIdPointId);
@@ -199,7 +200,7 @@ public class AlarmServiceImpl implements AlarmService {
      */
     public List<String> getRedisKeyList(){
         List<String> list = new ArrayList<>();
-        list.add("db0");
+        list.add(BusinessConstants.REDIS_KEY);
         return list;
     }
 

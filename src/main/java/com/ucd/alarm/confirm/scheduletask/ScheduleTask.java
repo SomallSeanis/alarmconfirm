@@ -1,22 +1,12 @@
 package com.ucd.alarm.confirm.scheduletask;
 
 import com.ucd.alarm.confirm.config.CommandLineRunnerImpl;
-import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
-import com.ucd.alarm.confirm.entity.AlarmRule;
 import com.ucd.alarm.confirm.service.AlarmService;
-import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * @ClassName: ScheduleTask
@@ -40,10 +30,18 @@ public class ScheduleTask {
      * @exception
      * @return void
      */
-    @Scheduled(cron = "0/5 * * * * ?")
+//    @Scheduled(cron = "0/60 * * * * ?")
+////    @Async("defaultThreadPool")
+//    public void getRedisValueTaskOne() throws Exception {
+//        Integer stationId = 1;
+//        if (CommandLineRunnerImpl.isDown) {
+//            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+//        }
+//    }
+    @Scheduled(cron = "0/60 * * * * ?")
     @Async("defaultThreadPool")
-    public void getRedisValueTaskOne() throws Exception {
-        Integer stationId = 1;
+    public void getRedisValueTaskTwo() throws Exception {
+        Integer stationId = 2;
         if (CommandLineRunnerImpl.isDown) {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }

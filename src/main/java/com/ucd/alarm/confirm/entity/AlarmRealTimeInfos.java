@@ -52,7 +52,7 @@ public class AlarmRealTimeInfos implements  Serializable {
      */
     private String maxTime;
     /**
-     * 告警产生最新时间
+     * 告警类型
      */
     private int alarmType;
 

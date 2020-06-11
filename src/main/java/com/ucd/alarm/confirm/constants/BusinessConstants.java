@@ -14,4 +14,7 @@ public class BusinessConstants {
     /**超限告警类型*/
     public static final Integer ALARM_LIMIT_TYPE = 0;
 
+    /**RedisKey*/
+    public static final String REDIS_KEY = "db0";
+
 }

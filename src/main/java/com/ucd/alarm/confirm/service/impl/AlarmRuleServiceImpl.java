@@ -39,9 +39,8 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++){
             alarmTaskService.getAlarmRuleListByStationId(i);
         }
-        Thread.sleep(20000L);
+        Thread.sleep(10000L);
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++) {
-            Thread.sleep(10000L);
             System.out.println("RuleMap"+i+":"+MemoryCacheUtils.getRuleDataSize(MemoryCacheUtils.getRuleMapByStationId(i)));
         }
         return null;
