@@ -23,4 +23,16 @@ public interface AlarmService {
      */
     Map<String,Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) throws Exception;
 
+
+    /**
+     * @author Crayon
+     * @Description 修改各个车站最终设备告警等级结果
+     * @date 2020/6/11 10:27 下午
+     * @params []
+     * @exception
+     * @return java.lang.Boolean
+     */
+    Boolean updataAlarmLevelResult(Integer stationId) throws Exception;
+
+
 }

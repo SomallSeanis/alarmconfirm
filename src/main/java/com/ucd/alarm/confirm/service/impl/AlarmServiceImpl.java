@@ -1,8 +1,12 @@
 package com.ucd.alarm.confirm.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
+import com.ucd.alarm.confirm.entity.AlarmRule;
 import com.ucd.alarm.confirm.enums.PointValueEnum;
+import com.ucd.alarm.confirm.service.AlarmRuleService;
 import com.ucd.alarm.confirm.service.AlarmService;
+import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import com.ucd.alarm.confirm.utils.StringRedisTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +18,13 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: AlarmRedisServiceImpl
@@ -41,6 +49,8 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+
+    private AlarmRuleService alarmRuleService;
 
     /**
      * @return java.util.List<java.util.Map < java.lang.String, java.lang.String>>
@@ -88,6 +98,62 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     /**
+     * @author Crayon
+     * @Description 修改各个车站最终设备告警等级结果       
+     * @date 2020/6/11 10:31 下午 
+     * @params []
+     * @exception  
+     * @return java.lang.Boolean
+     */
+    @Override
+    public Boolean updataAlarmLevelResult(Integer stationId) throws Exception{
+        // 获取告警表信息
+        Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
+
+        // 获取规则表Map  key为stationId_pointId，
+        Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(stationId);
+
+        // 获取告警信息表中的所有stationId_pointId
+        List<String> listStationIdPointId = mapByStationId.keySet().stream().collect(Collectors.toList());
+
+            // 查询redis中所有点值信息
+            Map<String, Map<String, String>> stringMapMap = this.hashMapListStream(this.getRedisKeyList(), listStationIdPointId);
+
+            final Map<String, String> mapValue = stringMapMap.get("db0");
+            mapValue.forEach((stationIdPointId, pointValue) -> {
+                // 获取 对应告警规则数据
+                List<AlarmRealTimeInfos> alarmRealTimeInfos = mapByStationId.get(stationIdPointId);
+                // 获取maxTime
+                String maxTime = alarmRealTimeInfos.get(0).getMaxTime();
+                // 取出数据
+                List<Integer> alarmOrderList = alarmRealTimeInfos.parallelStream().map(AlarmRealTimeInfos::getAlarmOrder)
+                        .collect(Collectors.toList());
+                // 获取alarmOrder最大值
+                int alarmOrderMax = Collections.max(alarmOrderList);
+
+                alarmRealTimeInfos = alarmRealTimeInfos.parallelStream()
+                        .collect(Collectors.collectingAndThen(Collectors.toCollection(()
+                                -> new TreeSet<>(Comparator.comparing(AlarmRealTimeInfos::getAlarmType))),ArrayList::new));
+                // 如果为size 1 所有值相同
+                if(alarmRealTimeInfos.size() != 1){
+                    // 报异常 日志
+                    log.error("【{}】:告警类型不唯一,跳过本次操作",stationIdPointId);
+                    return;
+                }
+                // 获取告警类型
+                Integer alarmType = alarmRealTimeInfos.get(0).getAlarmType();
+                // 获取规则数据
+                List<AlarmRule> alarmRulesList = ruleMapByStationId.get(stationIdPointId);
+                // 根据当前告警类型获取告警规则数据
+                alarmRulesList = alarmRulesList.stream().filter(type -> type.getAlarmType() == alarmType).collect(Collectors.toList());
+                // 调取 判断告警等级接口
+                alarmRuleService.doRuleCheck(stationId,pointValue,alarmOrderMax,alarmType,maxTime,alarmRulesList);
+            });
+
+        return true;
+    }
+
+    /**
      * @return java.lang.String
      * @throws
      * @author Crayon
@@ -122,4 +188,21 @@ public class AlarmServiceImpl implements AlarmService {
         }
         return fieldName;
     }
+
+    /**
+     * @author Crayon
+     * @Description 所有有redis key
+     * @date 2020/6/11 10:37 下午
+     * @params []
+     * @exception
+     * @return java.util.List<java.lang.String>
+     */
+    public List<String> getRedisKeyList(){
+        List<String> list = new ArrayList<>();
+        list.add("db0");
+        return list;
+    }
+
+
+
 }
