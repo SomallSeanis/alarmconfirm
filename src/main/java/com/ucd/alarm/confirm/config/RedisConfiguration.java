@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
@@ -37,6 +40,7 @@ import java.util.Set;
  * @Version 1.0
  * @Copyright: Copyright©2018-2020 BJCJ Inc. All rights reserved.
  **/
+@RefreshScope
 @Configuration
 public class RedisConfiguration {
     @Value("${spring.redis.cluster.nodes}")
@@ -58,6 +62,7 @@ public class RedisConfiguration {
     @Value("${spring.redis.lettuce.pool.max-active}")
     private int maxActive;
 
+    @RefreshScope
     @Bean
     LettuceConnectionFactory lettuceConnectionFactory() {
         // 连接池配置

@@ -6,6 +6,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import com.google.common.collect.Maps;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -28,6 +29,7 @@ import java.util.Map;
  **/
 @Configuration
 @EnableKafka
+@RefreshScope
 public class KafkaConfig {
     
     @Value("${spring.kafka.bootstrap-servers}")
@@ -59,7 +61,6 @@ public class KafkaConfig {
      * @exception
      * @return java.util.Map<java.lang.String,java.lang.Object>
      */
-    @Bean
     public Map<String, Object> producerConfigs() {
         Map<String, Object> props = Maps.newHashMap();
         props.put(ProducerConfig.ACKS_CONFIG,acks);
@@ -79,6 +80,7 @@ public class KafkaConfig {
      * @return org.springframework.kafka.core.ProducerFactory<java.lang.String,java.lang.String>  
      */
     @Bean
+    @RefreshScope
     public ProducerFactory<String, String> producerFactory() {
         return new DefaultKafkaProducerFactory<>(producerConfigs());
     }
@@ -92,6 +94,7 @@ public class KafkaConfig {
      * @return org.springframework.kafka.core.KafkaTemplate<java.lang.String,java.lang.String>  
      */
     @Bean
+    @RefreshScope
     public KafkaTemplate<String, String> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
@@ -103,7 +106,6 @@ public class KafkaConfig {
      * @exception  
      * @return java.util.Map<java.lang.String,java.lang.Object>  
      */
-    @Bean
     public Map<String, Object> consumerConfigs() {
         Map<String, Object> props = Maps.newHashMap();
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -125,7 +127,9 @@ public class KafkaConfig {
      * @exception  
      * @return org.springframework.kafka.config.KafkaListenerContainerFactory<?>  
      */
+
     @Bean
+    @RefreshScope
     public KafkaListenerContainerFactory<?> batchFactory() {
         ConcurrentKafkaListenerContainerFactory<Integer, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(new DefaultKafkaConsumerFactory<>(consumerConfigs()));
