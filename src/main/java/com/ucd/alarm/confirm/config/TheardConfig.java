@@ -37,13 +37,35 @@ public class TheardConfig implements AsyncConfigurer {
     public ThreadPoolTaskExecutor defaultThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //核心线程数目
-        executor.setCorePoolSize(33);
+        executor.setCorePoolSize(35);
         //指定最大线程数
         executor.setMaxPoolSize(100);
         //队列中最大的数目
-        executor.setQueueCapacity(66);
+        executor.setQueueCapacity(70);
         //线程名称前缀
         executor.setThreadNamePrefix("alarmThreadPool-");
+        //rejection-policy：当pool已经达到max size的时候，如何处理新任务
+        //CALLER_RUNS：不在新线程中执行任务，而是由调用者所在的线程来执行
+        //对拒绝task的处理策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        //线程空闲后的最大存活时间
+        executor.setKeepAliveSeconds(300);
+        //加载
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(destroyMethod = "shutdown", name = "reloadDataThreadPool")
+    public ThreadPoolTaskExecutor reloadDataThreadPool() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        //核心线程数目
+        executor.setCorePoolSize(0);
+        //指定最大线程数
+        executor.setMaxPoolSize(70);
+        //队列中最大的数目
+        executor.setQueueCapacity(70);
+        //线程名称前缀
+        executor.setThreadNamePrefix("reloadThreadPool-");
         //rejection-policy：当pool已经达到max size的时候，如何处理新任务
         //CALLER_RUNS：不在新线程中执行任务，而是由调用者所在的线程来执行
         //对拒绝task的处理策略
@@ -66,9 +88,9 @@ public class TheardConfig implements AsyncConfigurer {
     @Bean(destroyMethod = "shutdown", name = "alarmTaskScheduler")
     public ThreadPoolTaskScheduler alarmTaskScheduler(){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(29);
-        scheduler.setThreadNamePrefix("alarmTask-");
-        scheduler.setAwaitTerminationSeconds(60);
+        scheduler.setPoolSize(36);
+        scheduler.setThreadNamePrefix("alarmSchedulerTask-");
+        scheduler.setAwaitTerminationSeconds(1800);
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
         return scheduler;
     }

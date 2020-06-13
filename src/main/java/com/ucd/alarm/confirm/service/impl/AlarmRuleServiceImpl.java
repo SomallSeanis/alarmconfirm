@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
@@ -35,23 +37,25 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public final AlarmTaskService alarmTaskService;
 
     @Override
-    public List<Map<String, Object>> getAlarmRuleLists() throws InterruptedException {
+    public void getAlarmRuleLists() throws InterruptedException {
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++){
             alarmTaskService.getAlarmRuleListByStationId(i);
         }
-        Thread.sleep(10000L);
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++) {
             System.out.println("RuleMap"+i+":"+MemoryCacheUtils.getRuleDataSize(MemoryCacheUtils.getRuleMapByStationId(i)));
         }
-        return null;
     }
 
 
     @Override
-    public void doRuleCheck(int stationId, String redisValue, int alarmOrder, int alarmType, String maxTime, List<AlarmRule> alarmRuleList) {
+    public boolean doRuleCheck(int stationId, String redisValue, int alarmOrder, int alarmType, String maxTime, List<AlarmRule> alarmRuleList) {
         float value = 0;
+        boolean isUpdata = true;
         if (!StringUtils.isEmpty(redisValue)) {
             value = Float.parseFloat(redisValue);
+        }
+        if(ObjectUtils.isEmpty(alarmRuleList)||alarmRuleList.size()==0){
+            return false;
         }
         int pointId = alarmRuleList.get(0).getPointId();
         String time = "\'" + maxTime + "\';";
@@ -77,8 +81,9 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
             }
         }
+        return isUpdata;
     }
-    private void doUpdata(int stationId, int alarmType, int pointId, String time) {
+    private void doUpdata(int stationId, int alarmType, int pointId, String time) throws DataAccessException {
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 where StationId=" + stationId + " and PointId= " + pointId + " and alarmType=" + alarmType + " and AlarmStatus=0 and AlarmDateTime<=" + time;
         jdbcHikariTemplate.update(sql);
     }

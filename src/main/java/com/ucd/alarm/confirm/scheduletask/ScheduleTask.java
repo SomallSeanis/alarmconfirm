@@ -1,7 +1,8 @@
 package com.ucd.alarm.confirm.scheduletask;
 
-import com.ucd.alarm.confirm.config.CommandLineRunnerImpl;
+import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.service.AlarmService;
+import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -23,12 +24,12 @@ public class ScheduleTask {
     AlarmService alarmService;
 
     /**
+     * @return void
+     * @throws
      * @author Crayon
-     * @Description  车站id为1的定时任务
+     * @Description 车站id为1的定时任务
      * @date 2020/6/12 4:39 上午
      * @params []
-     * @exception
-     * @return void
      */
 //    @Scheduled(cron = "0/60 * * * * ?")
 ////    @Async("defaultThreadPool")
@@ -38,11 +39,13 @@ public class ScheduleTask {
 //            boolean flag = alarmService.updataAlarmLevelResult(stationId);
 //        }
 //    }
-    @Scheduled(cron = "0/60 * * * * ?")
+    @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwo() throws Exception {
-        Integer stationId = 2;
-        if (CommandLineRunnerImpl.isDown) {
+
+        Integer stationId = BusinessConstants.StationId.DA_HE_GENG_STATION;
+        boolean isGetCache = AlarmTaskService.excAlarmResultHashMap.get(stationId) && AlarmTaskService.excRuleResultHashMap.get(stationId);
+        if (isGetCache) {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }

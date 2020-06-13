@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -34,14 +35,18 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmTaskService {
 
+    public static final Map<Integer, Boolean> excAlarmResultHashMap = new ConcurrentHashMap<>();
+    public static final Map<Integer, Boolean> excRuleResultHashMap = new ConcurrentHashMap<>();
     @Qualifier("jdbcHikariTemplate")
     private final JdbcTemplate jdbcHikariTemplate;
 
     @Async("defaultThreadPool")
     public void getAlarmListByStationId(int stationId) {
+        excAlarmResultHashMap.put(stationId, false);
         //根据站ID查询对应SQL
         String sql = AlarmSqlCacheConstants.getSqlByStationId(stationId);
         Map<String, List<AlarmRealTimeInfos>> resultMap = MemoryCacheUtils.getMapByStationId(stationId);
+        resultMap.clear();
         //根据站ID查询告警
         jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRealTimeInfos>>() {
             @Override
@@ -72,16 +77,15 @@ public class AlarmTaskService {
                 return list;
             }
         });
-
-//        System.out.println(mapList);
-        //根据站
+        excAlarmResultHashMap.put(stationId, true);
 
     }
 
     @Async("defaultThreadPool")
     public void getAlarmRuleListByStationId(int stationId) {
+        excAlarmResultHashMap.put(stationId, false);
         String sql = AlarmRuleSqlCacheConstants.getSqlByStationId(stationId);
-        Map<String,  List<AlarmRule>> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
+        Map<String, List<AlarmRule>> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
         //根据站ID查询告警
         List<AlarmRule> mapList = jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRule>>() {
 
@@ -112,6 +116,7 @@ public class AlarmTaskService {
                 return list;
             }
         });
+        excAlarmResultHashMap.put(stationId, true);
     }
 
 

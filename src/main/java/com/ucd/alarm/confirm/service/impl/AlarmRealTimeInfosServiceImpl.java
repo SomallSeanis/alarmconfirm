@@ -29,15 +29,12 @@ public class AlarmRealTimeInfosServiceImpl implements AlarmRealTimeInfosService 
 
 
     @Override
-    public List<Map<String, Object>> getAlarmLists() throws InterruptedException {
+    public void getAlarmLists() throws InterruptedException {
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++){
             alarmTaskService.getAlarmListByStationId(i);
         }
-        Thread.sleep(10000L);
         for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++) {
-//            Thread.sleep(10000L);
             System.out.println("AlarmMap"+i+":"+MemoryCacheUtils.getDataSize(MemoryCacheUtils.getMapByStationId(i)));
         }
-        return null;
     }
 }
