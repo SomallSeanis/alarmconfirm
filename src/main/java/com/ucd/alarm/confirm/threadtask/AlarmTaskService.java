@@ -40,7 +40,7 @@ public class AlarmTaskService {
     @Qualifier("jdbcHikariTemplate")
     private final JdbcTemplate jdbcHikariTemplate;
 
-    @Async("defaultThreadPool")
+    @Async("reloadDataThreadPool")
     public void getAlarmListByStationId(int stationId) {
         excAlarmResultHashMap.put(stationId, false);
         //根据站ID查询对应SQL
@@ -81,9 +81,9 @@ public class AlarmTaskService {
 
     }
 
-    @Async("defaultThreadPool")
+    @Async("reloadDataThreadPool")
     public void getAlarmRuleListByStationId(int stationId) {
-        excAlarmResultHashMap.put(stationId, false);
+        excRuleResultHashMap.put(stationId, false);
         String sql = AlarmRuleSqlCacheConstants.getSqlByStationId(stationId);
         Map<String, List<AlarmRule>> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
         //根据站ID查询告警
@@ -116,7 +116,7 @@ public class AlarmTaskService {
                 return list;
             }
         });
-        excAlarmResultHashMap.put(stationId, true);
+        excRuleResultHashMap.put(stationId, true);
     }
 
 

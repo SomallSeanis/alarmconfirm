@@ -68,6 +68,18 @@ public class AlarmSqlCacheConstants {
             " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
     private static final String SQL_29 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 29 group by StationId,PointId)B" +
             " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
+    private static final String SQL_30 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 30 group by StationId,PointId)B" +
+            " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
+    private static final String SQL_31 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 31 group by StationId,PointId)B" +
+            " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
+    private static final String SQL_32 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 32 group by StationId,PointId)B" +
+            " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
+    private static final String SQL_33 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 33 group by StationId,PointId)B" +
+            " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
+    private static final String SQL_34 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 34 group by StationId,PointId)B" +
+            " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
+    private static final String SQL_35 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, A.AlarmType, B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 35 group by StationId,PointId)B" +
+            " on A.StationId=B.StationId AND A.PointId=B.PointId AND  A.AlarmDateTime=B.MaxTime LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId;";
 
 
     public static String getSqlByStationId(int stationId) {
@@ -159,6 +171,24 @@ public class AlarmSqlCacheConstants {
                 break;
             case 29:
                 sql = SQL_29;
+                break;
+            case 30:
+                sql = SQL_30;
+                break;
+            case 31:
+                sql = SQL_31;
+                break;
+            case 32:
+                sql = SQL_32;
+                break;
+            case 33:
+                sql = SQL_33;
+                break;
+            case 34:
+                sql = SQL_34;
+                break;
+            case 35:
+                sql = SQL_35;
                 break;
             default:
                 break;

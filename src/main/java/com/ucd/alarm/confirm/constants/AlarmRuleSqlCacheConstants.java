@@ -39,6 +39,12 @@ public class AlarmRuleSqlCacheConstants {
     private static final String SQL_27 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=27;";
     private static final String SQL_28 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=28;";
     private static final String SQL_29 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=29;";
+    private static final String SQL_30 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=30;";
+    private static final String SQL_31 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=31;";
+    private static final String SQL_32 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=32;";
+    private static final String SQL_33 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=33;";
+    private static final String SQL_34 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=34;";
+    private static final String SQL_35 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=35;";
 
 
     public static String getSqlByStationId(int stationId) {
@@ -130,6 +136,24 @@ public class AlarmRuleSqlCacheConstants {
                 break;
             case 29:
                 sql = SQL_29;
+                break;
+            case 30:
+                sql = SQL_30;
+                break;
+            case 31:
+                sql = SQL_31;
+                break;
+            case 32:
+                sql = SQL_32;
+                break;
+            case 33:
+                sql = SQL_33;
+                break;
+            case 34:
+                sql = SQL_34;
+                break;
+            case 35:
+                sql = SQL_35;
                 break;
             default:
                 break;

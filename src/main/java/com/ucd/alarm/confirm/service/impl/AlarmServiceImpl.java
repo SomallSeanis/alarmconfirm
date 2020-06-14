@@ -197,12 +197,16 @@ public class AlarmServiceImpl implements AlarmService {
             Integer alarmType = alarmRealTimeInfos.get(0).getAlarmType();
             // 获取规则数据
             List<AlarmRule> alarmRulesList = threadRuleLocal.get().get(stationIdPointId);
+            if(ObjectUtils.isEmpty(alarmRulesList)||alarmRulesList.size()==0){
+                return;
+            }
             // 根据当前告警类型获取告警规则数据
-            alarmRulesList = alarmRulesList.stream().filter(type -> type.getAlarmType() == alarmType).collect(Collectors.toList());
+            alarmRulesList = alarmRulesList.stream().filter(type -> alarmType.equals(type.getAlarmType())).collect(Collectors.toList());
             // 调取 判断告警等级接口
             boolean isUpdata = alarmRuleService.doRuleCheck(stationId, pointValue, alarmOrderMax, alarmType, maxTime, alarmRulesList);
         });
-
+        threadAlarmLocal.remove();
+        threadRuleLocal.remove();
         return true;
     }
 

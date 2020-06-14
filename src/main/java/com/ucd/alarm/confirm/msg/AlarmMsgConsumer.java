@@ -34,8 +34,8 @@ public class AlarmMsgConsumer {
      * @return void
      */
     @KafkaListener(topics = "alarm",groupId = groupid)
-    public void listenSubwayInfoWeb(ConsumerRecord<String, String> record) {
-        consumerSubwayInfo(record);
+    public void listenAlarmInfo(ConsumerRecord<String, String> record) {
+        consumerAlarmInfo(record);
     }
 
     /***
@@ -46,12 +46,12 @@ public class AlarmMsgConsumer {
      * @exception
      * @return void
      */
-    public void consumerSubwayInfo(ConsumerRecord<String, String> record) {
+    public void consumerAlarmInfo(ConsumerRecord<String, String> record) {
         //java8加入的新类，可以有效防止空指针异常
         Optional<?> kafkaMessage = Optional.ofNullable(record.value());
         if (kafkaMessage.isPresent()) {
             Object message = kafkaMessage.get();
-            this.dealSubwayInfo(message);
+            this.dealAlarmInfo(message);
         }
     }
 
@@ -63,7 +63,9 @@ public class AlarmMsgConsumer {
      * @exception
      * @return void
      */
-    public void dealSubwayInfo(Object message){
+    public void dealAlarmInfo(Object message){
+        String alarmInfo=String.valueOf(message);
+        log.info("subwayInfo:"+alarmInfo);
 
     }
 }

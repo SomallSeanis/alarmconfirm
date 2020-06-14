@@ -71,7 +71,7 @@ public class TheardConfig implements AsyncConfigurer {
         //对拒绝task的处理策略
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
         //线程空闲后的最大存活时间
-        executor.setKeepAliveSeconds(300);
+        executor.setKeepAliveSeconds(30);
         //加载
         executor.initialize();
         return executor;

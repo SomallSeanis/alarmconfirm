@@ -47,6 +47,12 @@ public class MemoryCacheUtils {
     private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_SEVENTH_CACHE_DATA = new ConcurrentHashMap<>();
     private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_EIGHTH_CACHE_DATA = new ConcurrentHashMap<>();
     private static final Map<String, List<AlarmRealTimeInfos>> STATION_TWENTY_NINTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTY_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTY_FIRST_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTY_SECOND_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTY_FOURTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTY_FIFTH_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRealTimeInfos>> STATION_THIRTY_SIXTH_CACHE_DATA = new ConcurrentHashMap<>();
     /**AlarmRule容器*/
     private static final Map<String, List<AlarmRule>> STATION_FIRST_RULE_CACHE_DATA = new ConcurrentHashMap<>();
     private static final Map<String, List<AlarmRule>> STATION_SECOND_RULE_CACHE_DATA = new ConcurrentHashMap<>();
@@ -77,6 +83,12 @@ public class MemoryCacheUtils {
     private static final Map<String, List<AlarmRule>> STATION_TWENTY_SEVENTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
     private static final Map<String, List<AlarmRule>> STATION_TWENTY_EIGHTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
     private static final Map<String, List<AlarmRule>> STATION_TWENTY_NINTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRule>> STATION_THIRTY_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRule>> STATION_THIRTY_FIRST_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRule>> STATION_THIRTY_SECOND_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRule>> STATION_THIRTY_FOURTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRule>> STATION_THIRTY_FIFTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
+    private static final Map<String, List<AlarmRule>> STATION_THIRTY_SIXTH_RULE_CACHE_DATA = new ConcurrentHashMap<>();
 
     /**
      * @throws
@@ -230,6 +242,18 @@ public class MemoryCacheUtils {
                 return STATION_TWENTY_EIGHTH_CACHE_DATA;
             case 29:
                 return STATION_TWENTY_NINTH_CACHE_DATA;
+            case 30:
+                return STATION_THIRTY_CACHE_DATA;
+            case 31:
+                return STATION_THIRTY_FIRST_CACHE_DATA;
+            case 32:
+                return STATION_THIRTY_SECOND_CACHE_DATA;
+            case 33:
+                return STATION_THIRTY_FOURTH_CACHE_DATA;
+            case 34:
+                return STATION_THIRTY_FIFTH_CACHE_DATA;
+            case 35:
+                return STATION_THIRTY_SIXTH_CACHE_DATA;
             default:
                 break;
         }
@@ -295,6 +319,18 @@ public class MemoryCacheUtils {
                 return STATION_TWENTY_EIGHTH_RULE_CACHE_DATA;
             case 29:
                 return STATION_TWENTY_NINTH_RULE_CACHE_DATA;
+            case 30:
+                return STATION_THIRTY_RULE_CACHE_DATA;
+            case 31:
+                return STATION_THIRTY_FIRST_RULE_CACHE_DATA;
+            case 32:
+                return STATION_THIRTY_SECOND_RULE_CACHE_DATA;
+            case 33:
+                return STATION_THIRTY_FOURTH_RULE_CACHE_DATA;
+            case 34:
+                return STATION_THIRTY_FIFTH_RULE_CACHE_DATA;
+            case 35:
+                return STATION_THIRTY_SIXTH_RULE_CACHE_DATA;
             default:
                 break;
         }

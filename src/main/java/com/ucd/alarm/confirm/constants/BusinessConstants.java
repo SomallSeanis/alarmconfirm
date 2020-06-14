@@ -10,7 +10,7 @@ package com.ucd.alarm.confirm.constants;
  **/
 public class BusinessConstants {
     /**车站总数*/
-    public static final Integer STATION_COUNT = 29;
+    public static final Integer STATION_COUNT = 35;
     /**超限告警类型*/
     public static final Integer ALARM_LIMIT_TYPE = 0;
 

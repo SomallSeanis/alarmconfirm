@@ -1,6 +1,8 @@
 package com.ucd.alarm.confirm.scheduletask;
 
 import com.ucd.alarm.confirm.constants.BusinessConstants;
+import com.ucd.alarm.confirm.service.AlarmRealTimeInfosService;
+import com.ucd.alarm.confirm.service.AlarmRuleService;
 import com.ucd.alarm.confirm.service.AlarmService;
 import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +24,12 @@ import org.springframework.stereotype.Component;
 public class ScheduleTask {
     @Autowired
     AlarmService alarmService;
+    @Autowired
+    AlarmRealTimeInfosService alarmRealTimeInfosService;
+    @Autowired
+    AlarmRuleService alarmRuleService;
 
+    private  int i =0;
     /**
      * @return void
      * @throws
@@ -31,23 +38,371 @@ public class ScheduleTask {
      * @date 2020/6/12 4:39 上午
      * @params []
      */
-//    @Scheduled(cron = "0/60 * * * * ?")
-////    @Async("defaultThreadPool")
-//    public void getRedisValueTaskOne() throws Exception {
-//        Integer stationId = 1;
-//        if (CommandLineRunnerImpl.isDown) {
-//            boolean flag = alarmService.updataAlarmLevelResult(stationId);
-//        }
-//    }
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
-    public void getRedisValueTaskTwo() throws Exception {
+    public void getRedisValueTaskOne() throws Exception {
+        Integer stationId = BusinessConstants.StationId.JIN_CHUAN_LU_STATION;
 
-        Integer stationId = BusinessConstants.StationId.DA_HE_GENG_STATION;
-        boolean isGetCache = AlarmTaskService.excAlarmResultHashMap.get(stationId) && AlarmTaskService.excRuleResultHashMap.get(stationId);
+        log.info("第1站第"+(i++)+"次");
+        boolean isGetCache = isGetCache(stationId);
         if (isGetCache) {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwo() throws Exception {
+        log.info("第2站");
+        Integer stationId = BusinessConstants.StationId.DA_HE_GENG_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThree() throws Exception {
+        log.info("第3站");
+        Integer stationId = BusinessConstants.StationId.HAI_TUN_LU_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskFourth() throws Exception {
+        log.info("第4站");
+        Integer stationId = BusinessConstants.StationId.XIAO_TUN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskFifth() throws Exception {
+        log.info("第5站");
+        Integer stationId = BusinessConstants.StationId.JIN_DING_SHAN_BEI_LU_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskSixth() throws Exception {
+        log.info("第5站");
+        Integer stationId = BusinessConstants.StationId.SU_JIA_TANG_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskSeventh() throws Exception {
+        log.info("第6站");
+        Integer stationId = BusinessConstants.StationId.XIAO_CAI_YUAN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskEighth() throws Exception {
+        log.info("第7站");
+        Integer stationId = BusinessConstants.StationId.HUO_CHE_BEI_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskNinth() throws Exception {
+        log.info("第8站");
+        Integer stationId = BusinessConstants.StationId.BAI_LONG_LU_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTenth() throws Exception {
+        log.info("第9站");
+        Integer stationId = BusinessConstants.StationId.DA_SHU_YING_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskEleventh() throws Exception {
+        log.info("第10站");
+        Integer stationId = BusinessConstants.StationId.JU_HUA_CUN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwelfth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.JU_HUA_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirteenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.HE_DIAN_YING_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskFourteenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.NIU_JIE_ZHUANG_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskFifteenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.ZHU_JIA_CUN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskSixteenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.YANG_FU_TOU_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskSeventeenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.YU_YUAN_LU_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskEighteenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.GUANG_WEI_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskNineteenth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.TA_MI_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentieth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.DOU_NAN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentyFirst() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.JIN_GUI_JIE_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentySecond() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.MEI_ZI_CUN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTwentyThird() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.GU_CHENG_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentyFourth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.KE_LE_CUN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentyFifth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.XIANG_FENG_JIE_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentySixth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.NIU_ROU_SHAN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentySeventh() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.LIAN_DA_JIE_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentyEighth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.WU_JIA_YING_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskTwentyNinth() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.KUN_MING_HUO_CHE_NAN_STATION;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirty() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.CONTORL_CENTER;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirtyOne() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.MA_XUN_ZHU_BIAN_DIAN_SUO;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirtyTwo() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirtyThree() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.HUO_CHE_BI_CONTORL_CENTER;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirtyFour() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.BAI_LONG_TAN_PART;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("defaultThreadPool")
+    public void getRedisValueTaskThirtyFive() throws Exception {
+
+        Integer stationId = BusinessConstants.StationId.GUANG_WEI_PART;
+        boolean isGetCache = isGetCache(stationId);
+        if (isGetCache) {
+            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+        }
+    }
+    @Scheduled(cron = "0/10 * * * * ?")
+    @Async("reloadDataThreadPool")
+    public void getReloadData() throws Exception {
+        log.info("重新从库中加载数据");
+        alarmRealTimeInfosService.getAlarmLists();
+        alarmRuleService.getAlarmRuleLists();
+    }
+    private boolean isGetCache(Integer stationId) {
+        boolean isAlarmReady = AlarmTaskService.excAlarmResultHashMap.get(stationId);
+        boolean isRuleReady = AlarmTaskService.excRuleResultHashMap.get(stationId);
+        if(AlarmTaskService.excAlarmResultHashMap.get(stationId)==null||AlarmTaskService.excRuleResultHashMap.get(stationId)==null){
+           return false;
+        }
+        return isAlarmReady && isRuleReady;
     }
 
 }

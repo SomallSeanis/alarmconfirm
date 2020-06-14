@@ -1,11 +1,13 @@
 package com.ucd.alarm.confirm.service.impl;
 
 import com.ucd.alarm.confirm.constants.BusinessConstants;
+import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
 import com.ucd.alarm.confirm.entity.AlarmRule;
 import com.ucd.alarm.confirm.service.AlarmRuleService;
 import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -17,6 +19,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName: AlarmRuleServiceImpl
@@ -37,12 +41,9 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     public final AlarmTaskService alarmTaskService;
 
     @Override
-    public void getAlarmRuleLists() throws InterruptedException {
-        for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++){
+    public void getAlarmRuleLists() {
+        for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
             alarmTaskService.getAlarmRuleListByStationId(i);
-        }
-        for (int i = 1; i<= BusinessConstants.STATION_COUNT; i++) {
-            System.out.println("RuleMap"+i+":"+MemoryCacheUtils.getRuleDataSize(MemoryCacheUtils.getRuleMapByStationId(i)));
         }
     }
 
@@ -54,15 +55,19 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         if (!StringUtils.isEmpty(redisValue)) {
             value = Float.parseFloat(redisValue);
         }
-        if(ObjectUtils.isEmpty(alarmRuleList)||alarmRuleList.size()==0){
+        if (ObjectUtils.isEmpty(alarmRuleList) || alarmRuleList.size() == 0) {
             return false;
         }
         int pointId = alarmRuleList.get(0).getPointId();
         String time = "\'" + maxTime + "\';";
         if (alarmType == BusinessConstants.ALARM_LIMIT_TYPE) {
             float finalValue = value;
-            Integer order = alarmRuleList.stream().filter(alarmRule -> (finalValue > alarmRule.getHighLimit() && finalValue < alarmRule.getLowLimit()))
-                    .map(alarmRule -> alarmRule.getAlarmOrder()).max(Integer::compareTo).get();
+            List<AlarmRule> orderList = alarmRuleList.stream().filter(alarmRule -> (finalValue > alarmRule.getHighLimit() || finalValue < alarmRule.getLowLimit()))
+                    .collect(Collectors.toList());
+            if (ObjectUtils.isEmpty(orderList) || orderList.size() == 0) {
+                return false;
+            }
+            Integer order = orderList.stream().map(alarmRule -> alarmRule.getAlarmOrder()).max(Integer::compareTo).get();
             //判断是否告警等级变小
             if (order > alarmOrder) {
                 //执行自动确认sql
@@ -83,8 +88,15 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         }
         return isUpdata;
     }
+
     private void doUpdata(int stationId, int alarmType, int pointId, String time) throws DataAccessException {
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 where StationId=" + stationId + " and PointId= " + pointId + " and alarmType=" + alarmType + " and AlarmStatus=0 and AlarmDateTime<=" + time;
-        jdbcHikariTemplate.update(sql);
+        synchronized (this){
+            jdbcHikariTemplate.update(sql);
+        }
+        Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
+        if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {
+            mapByStationId.remove(stationId + "_" + pointId);
+        }
     }
 }
