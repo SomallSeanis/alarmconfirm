@@ -62,25 +62,25 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         String time = "\'" + maxTime + "\';";
         if (alarmType == BusinessConstants.ALARM_LIMIT_TYPE) {
             float finalValue = value;
-            List<AlarmRule> orderList = alarmRuleList.stream().filter(alarmRule -> (finalValue > alarmRule.getHighLimit() || finalValue < alarmRule.getLowLimit()))
+            List<AlarmRule> orderList = alarmRuleList.stream().filter(alarmRule -> (finalValue <= alarmRule.getHighLimit() && finalValue >= alarmRule.getLowLimit()))
                     .collect(Collectors.toList());
             if (ObjectUtils.isEmpty(orderList) || orderList.size() == 0) {
                 return false;
             }
             Integer order = orderList.stream().map(alarmRule -> alarmRule.getAlarmOrder()).max(Integer::compareTo).get();
             //判断是否告警等级变小
-            if (order > alarmOrder) {
+            if (order >= alarmOrder) {
                 //执行自动确认sql
-                doUpdata(stationId, alarmType, pointId, time);
+                doUpdata(stationId, alarmType, pointId, time,order);
             }
         }
         if (alarmType != BusinessConstants.ALARM_LIMIT_TYPE) {
-            for (int i = 1; i < alarmRuleList.size(); i++) {
-                if (i < 2) {
+            for (int i = 0; i < alarmRuleList.size(); i++) {
+                if (i < 1) {
                     float highLimit = alarmRuleList.get(i).getHighLimit();
                     if (value != highLimit) {
                         //执行自动确认sql
-                        doUpdata(stationId, alarmType, pointId, time);
+                        doUpdata(stationId, alarmType, pointId, time,alarmOrder);
                     }
                 }
 
@@ -89,9 +89,11 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         return isUpdata;
     }
 
-    private void doUpdata(int stationId, int alarmType, int pointId, String time) throws DataAccessException {
-        String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 where StationId=" + stationId + " and PointId= " + pointId + " and alarmType=" + alarmType + " and AlarmStatus=0 and AlarmDateTime<=" + time;
-        jdbcHikariTemplate.update(sql);
+    private void doUpdata(int stationId, int alarmType, int pointId, String time,int order) throws DataAccessException {
+        String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
+        synchronized (this) {
+            jdbcHikariTemplate.update(sql);
+        }
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {
             mapByStationId.remove(stationId + "_" + pointId);

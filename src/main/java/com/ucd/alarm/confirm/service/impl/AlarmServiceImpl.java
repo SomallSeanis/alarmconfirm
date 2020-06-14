@@ -159,7 +159,8 @@ public class AlarmServiceImpl implements AlarmService {
         if (ObjectUtils.isEmpty(ruleMapByStationId) || ruleMapByStationId.size() == 0) {
             return false;
         }
-
+        ThreadLocal<Map<String, List<AlarmRule>>> threadRuleLocal = new ThreadLocal<>();
+        threadRuleLocal.set(ruleMapByStationId);
 
         for (Map.Entry<String, List<AlarmRealTimeInfos>> entrySet : mapByStationId.entrySet()) {
             List<AlarmRealTimeInfos> alarmInfos = entrySet.getValue();
@@ -172,13 +173,11 @@ public class AlarmServiceImpl implements AlarmService {
             }
             mapByStationId.put(entrySet.getKey(),alarmRealTimeInfosList);
         }
-
-
-
         ThreadLocal<Map<String, List<AlarmRealTimeInfos>>> threadAlarmLocal = new ThreadLocal<>();
         threadAlarmLocal.set(mapByStationId);
-        ThreadLocal<Map<String, List<AlarmRule>>> threadRuleLocal = new ThreadLocal<>();
-        threadRuleLocal.set(ruleMapByStationId);
+
+
+
         // 获取告警信息表中的所有stationId_pointId
         List<String> listStationIdPointId = threadAlarmLocal.get().keySet().stream().collect(Collectors.toList());
         // 查询redis中所有点值信息

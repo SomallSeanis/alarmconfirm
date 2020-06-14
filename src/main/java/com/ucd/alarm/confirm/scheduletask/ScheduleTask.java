@@ -309,15 +309,15 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
-    @Scheduled(cron = "0/10 * * * * ?")
-    @Async("defaultThreadPool")
-    public void getRedisValueTaskThirty() throws Exception {
-        Integer stationId = BusinessConstants.StationId.CONTORL_CENTER;
-        boolean isGetCache = isGetCache(stationId);
-        if (isGetCache) {
-            boolean flag = alarmService.updataAlarmLevelResult(stationId);
-        }
-    }
+//    @Scheduled(cron = "0/10 * * * * ?")
+//    @Async("defaultThreadPool")
+//    public void getRedisValueTaskThirty() throws Exception {
+//        Integer stationId = BusinessConstants.StationId.CONTORL_CENTER;
+//        boolean isGetCache = isGetCache(stationId);
+//        if (isGetCache) {
+//            boolean flag = alarmService.updataAlarmLevelResult(stationId);
+//        }
+//    }
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyOne() throws Exception {
@@ -364,7 +364,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "* 0/30 * * * ?")
+    @Scheduled(cron = "0/60 * * * * ?")
     public void getReloadData() throws Exception {
         log.info("重新从库中加载数据");
         alarmRealTimeInfosService.getAlarmLists();

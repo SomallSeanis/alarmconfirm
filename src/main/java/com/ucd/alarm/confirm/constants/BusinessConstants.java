@@ -51,7 +51,7 @@ public class BusinessConstants {
         public static final Integer  CONTORL_CENTER = 30;
         public static final Integer  MA_XUN_ZHU_BIAN_DIAN_SUO = 31;
         public static final Integer  DA_YANG_TIAN_CHE_LIANG_DUAN = 32;
-        public static final Integer  HUO_CHE_BI_CONTORL_CENTER = 33;
+        public static final Integer  HUO_CHE_BEI_CONTORL_CENTER = 33;
         public static final Integer  BAI_LONG_TAN_PART = 34;
         public static final Integer  GUANG_WEI_PART = 35;
 

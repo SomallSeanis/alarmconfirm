@@ -13,6 +13,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,29 +111,36 @@ public class AlarmMsgConsumer {
                     alarmRealTimeInfos.setPointId(pointId);
                     alarmRealTimeInfos.setSpId(spId);
                     alarmRealTimeInfos.setAlarmRuleId(alarmRuleId);
-                   //alarmRealTimeInfos.setAlarmOrder(alarmOrder);
+                    //alarmRealTimeInfos.setAlarmOrder(alarmOrder);
                     alarmRealTimeInfos.setAlarmSource("KafKa");
                     alarmRealTimeInfos.setMaxTime(alarmDateTime);
                     //我们这从 ConcurrentHashMap 集合中去拿那个alarmType状态值
                     // 只要有一个 false 就会进去
+                    while (true) {
+                        if (!ObjectUtils.isEmpty(AlarmTaskService.excAlarmResultHashMap) && !ObjectUtils.isEmpty(AlarmTaskService.excRuleResultHashMap)) {
+                            break;
+                        }
+                    }
                     if (!AlarmTaskService.excAlarmResultHashMap.get(stationId) || !AlarmTaskService.excRuleResultHashMap.get(stationId)) {
                         //不符合条件 --> kafka 就先暂停发送数据
-                        kafkaManageService.stop();
+//                                kafkaManageService.stop();
+                        //一直循环判断是否具备从ConcurrentHashMap取值的条件.
+                        //true&& true =true
                         while (true) {
-                            //一直循环判断是否具备从ConcurrentHashMap取值的条件.
-                            //true&& true =true
                             if (AlarmTaskService.excAlarmResultHashMap.get(stationId) && AlarmTaskService.excRuleResultHashMap.get(stationId)) {
                                 //满足
-                                kafkaManageService.start();
+//                                        kafkaManageService.start();
                                 break;
                             }
                         }
                     }
+
+
                     // 满足条件之后,我们 我们先从concurrentHashMap里面查 --> 取数据(并且本次数据也不会丢失) --> 因为线程一直在做 while 循环判断
                     Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(stationId);
                     if (ruleMapByStationId != null || ruleMapByStationId.size() != 0) {
                         List<AlarmRule> alarmRules = ruleMapByStationId.get(spId);
-                        if(alarmRules!=null){
+                        if (alarmRules != null) {
                             for (AlarmRule alarmRule : alarmRules) {
                                 //根据alarm_Rule_id去查找alarmType
                                 if (alarmRule.getId().equals(alarmRuleId)) {
@@ -148,9 +156,9 @@ public class AlarmMsgConsumer {
                         //组装完毕 --> 将对象添加到告警对应的ConcurrentHashMap中
                         Map<String, List<AlarmRealTimeInfos>> realInfoMapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
                         //不管告警是升高了还是降低了 --> 都覆盖.
-                        ArrayList<AlarmRealTimeInfos> ruleTimeInfoList= new ArrayList<>();
+                        ArrayList<AlarmRealTimeInfos> ruleTimeInfoList = new ArrayList<>();
                         ruleTimeInfoList.add(alarmRealTimeInfos);
-                        realInfoMapByStationId.put(spId,ruleTimeInfoList);
+                        realInfoMapByStationId.put(spId, ruleTimeInfoList);
                     }
                 }
             }
