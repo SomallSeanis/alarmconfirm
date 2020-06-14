@@ -91,9 +91,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
     private void doUpdata(int stationId, int alarmType, int pointId, String time) throws DataAccessException {
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 where StationId=" + stationId + " and PointId= " + pointId + " and alarmType=" + alarmType + " and AlarmStatus=0 and AlarmDateTime<=" + time;
-        synchronized (this){
-            jdbcHikariTemplate.update(sql);
-        }
+        jdbcHikariTemplate.update(sql);
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {
             mapByStationId.remove(stationId + "_" + pointId);
