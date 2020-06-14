@@ -97,8 +97,8 @@ public class AlarmMsgConsumer {
                     //alarm_Rule_id
                     String alarmRuleId = (String) everyAlarmInfo.get("AlarmRuleId");
                     //alarm_order
-                    Map<String, Object> alarmLevel = (Map<String, Object>) everyAlarmInfo.get("AlarmLevel");
-                    Integer alarmOrder = (Integer) alarmLevel.get("Order");
+                   /* Map<String, Object> alarmLevel = (Map<String, Object>) everyAlarmInfo.get("AlarmLevel");
+                    Integer alarmOrder = (Integer) alarmLevel.get("Order");*/
                     //alarm_source
                     //kafka
                     //max_time
@@ -110,7 +110,7 @@ public class AlarmMsgConsumer {
                     alarmRealTimeInfos.setPointId(pointId);
                     alarmRealTimeInfos.setSpId(spId);
                     alarmRealTimeInfos.setAlarmRuleId(alarmRuleId);
-                    alarmRealTimeInfos.setAlarmOrder(alarmOrder);
+                   //alarmRealTimeInfos.setAlarmOrder(alarmOrder);
                     alarmRealTimeInfos.setAlarmSource("KafKa");
                     alarmRealTimeInfos.setMaxTime(alarmDateTime);
                     //我们这从 ConcurrentHashMap 集合中去拿那个alarmType状态值
@@ -132,13 +132,17 @@ public class AlarmMsgConsumer {
                     Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(stationId);
                     if (ruleMapByStationId != null || ruleMapByStationId.size() != 0) {
                         List<AlarmRule> alarmRules = ruleMapByStationId.get(spId);
-                        for (AlarmRule alarmRule : alarmRules) {
-                            //根据alarm_Rule_id去查找alarmType
-                            if (alarmRule.getId().equals(alarmRuleId)) {
-                                //这就是找到了,取alarmType
-                                int alarmType1 = alarmRule.getAlarmType();
-                                alarmRealTimeInfos.setAlarmType(alarmType1);
-                                break;
+                        if(alarmRules!=null){
+                            for (AlarmRule alarmRule : alarmRules) {
+                                //根据alarm_Rule_id去查找alarmType
+                                if (alarmRule.getId().equals(alarmRuleId)) {
+                                    //这就是找到了,取alarmType
+                                    int alarmType1 = alarmRule.getAlarmType();
+                                    int alarmOrder = alarmRule.getAlarmOrder();
+                                    alarmRealTimeInfos.setAlarmType(alarmType1);
+                                    alarmRealTimeInfos.setAlarmOrder(alarmOrder);
+                                    break;
+                                }
                             }
                         }
                         //组装完毕 --> 将对象添加到告警对应的ConcurrentHashMap中
