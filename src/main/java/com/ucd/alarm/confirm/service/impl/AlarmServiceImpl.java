@@ -159,6 +159,22 @@ public class AlarmServiceImpl implements AlarmService {
         if (ObjectUtils.isEmpty(ruleMapByStationId) || ruleMapByStationId.size() == 0) {
             return false;
         }
+
+
+        for (Map.Entry<String, List<AlarmRealTimeInfos>> entrySet : mapByStationId.entrySet()) {
+            List<AlarmRealTimeInfos> alarmInfos = entrySet.getValue();
+            List<AlarmRealTimeInfos> alarmRealTimeInfosList = new ArrayList<>();
+            for (AlarmRealTimeInfos alarmRealTimeInfos:alarmInfos) {
+                    if(ObjectUtils.isEmpty(alarmRealTimeInfos.getAlarmType())){
+                        continue;
+                    }
+                    alarmRealTimeInfosList.add(alarmRealTimeInfos);
+            }
+            mapByStationId.put(entrySet.getKey(),alarmRealTimeInfosList);
+        }
+
+
+
         ThreadLocal<Map<String, List<AlarmRealTimeInfos>>> threadAlarmLocal = new ThreadLocal<>();
         threadAlarmLocal.set(mapByStationId);
         ThreadLocal<Map<String, List<AlarmRule>>> threadRuleLocal = new ThreadLocal<>();
@@ -197,7 +213,7 @@ public class AlarmServiceImpl implements AlarmService {
             Integer alarmType = alarmRealTimeInfos.get(0).getAlarmType();
             // 获取规则数据
             List<AlarmRule> alarmRulesList = threadRuleLocal.get().get(stationIdPointId);
-            if(ObjectUtils.isEmpty(alarmRulesList)||alarmRulesList.size()==0){
+            if (ObjectUtils.isEmpty(alarmRulesList) || alarmRulesList.size() == 0) {
                 return;
             }
             // 根据当前告警类型获取告警规则数据

@@ -1,7 +1,12 @@
 package com.ucd.alarm.confirm.msg;
 
 
-import jdk.internal.org.objectweb.asm.tree.TryCatchBlockNode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
+import com.ucd.alarm.confirm.entity.AlarmRule;
+import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
+import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -9,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -24,8 +32,12 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmMsgConsumer {
 
+    //组内竞争,组间共享 -->  不同的组通过同一个 topic 拿到的数据是一样的.
+    //优先使用类文件中的groupid, 如果类文件中未定义groupid, 则才会使用配置文件中的groupid, 两者并不会产生冲突.
     private final static String groupid = "alarmconfirm";
-    private final  KafkaManageService kafkaManageService;
+
+    //管控kafka数据传输的开关
+    private final KafkaManageService kafkaManageService;
 
     /***
      * @author liuxin
@@ -49,7 +61,6 @@ public class AlarmMsgConsumer {
      * @return void
      */
     public void consumerAlarmInfo(ConsumerRecord<String, String> record) {
-
         //java8加入的新类，可以有效防止空指针异常
         Optional<?> kafkaMessage = Optional.ofNullable(record.value());
         if (kafkaMessage.isPresent()) {
@@ -66,17 +77,82 @@ public class AlarmMsgConsumer {
      * @exception
      * @return void
      */
+    //在这个方法里面,我们需要将信息接入到ConcurrentHashMap中.
     public void dealAlarmInfo(Object message) {
         String alarmInfo = String.valueOf(message);
-        log.info("subwayInfo:" + alarmInfo);
-        kafkaManageService.stop();
-        try{
-            Thread.sleep(5000L);
-        }catch (Exception e){
-            log.info(""+e);
-        }
+        log.info(alarmInfo);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Map everyAlarmInfo = objectMapper.readValue(alarmInfo, Map.class);
+            if (everyAlarmInfo != null && everyAlarmInfo.size() != 0) {
+                if (everyAlarmInfo.get("AlarmStatus").equals("Unprocessed")) {
+                    //车站id
+                    Integer stationId = (Integer) everyAlarmInfo.get("StationId");
+                    //点的id
+                    Integer pointId = (Integer) everyAlarmInfo.get("PointId");
+                    //车站id_点的id
+                    String spId = stationId + "_" + pointId;
+                    AlarmRealTimeInfos alarmRealTimeInfos = new AlarmRealTimeInfos();
 
-        kafkaManageService.start();
+                    //alarm_Rule_id
+                    String alarmRuleId = (String) everyAlarmInfo.get("AlarmRuleId");
+                    //alarm_order
+                    Map<String, Object> alarmLevel = (Map<String, Object>) everyAlarmInfo.get("AlarmLevel");
+                    Integer alarmOrder = (Integer) alarmLevel.get("Order");
+                    //alarm_source
+                    //kafka
+                    //max_time
+                    String alarmDateTime = (String) everyAlarmInfo.get("AlarmDateTime");
+                    //alarm_type
+                    String alarmType = (String) everyAlarmInfo.get("AlarmType");
+                    //组装
+                    alarmRealTimeInfos.setStationId(stationId);
+                    alarmRealTimeInfos.setPointId(pointId);
+                    alarmRealTimeInfos.setSpId(spId);
+                    alarmRealTimeInfos.setAlarmRuleId(alarmRuleId);
+                    alarmRealTimeInfos.setAlarmOrder(alarmOrder);
+                    alarmRealTimeInfos.setAlarmSource("KafKa");
+                    alarmRealTimeInfos.setMaxTime(alarmDateTime);
+                    //我们这从 ConcurrentHashMap 集合中去拿那个alarmType状态值
+                    // 只要有一个 false 就会进去
+                    if (!AlarmTaskService.excAlarmResultHashMap.get(stationId) || !AlarmTaskService.excRuleResultHashMap.get(stationId)) {
+                        //不符合条件 --> kafka 就先暂停发送数据
+                        kafkaManageService.stop();
+                        while (true) {
+                            //一直循环判断是否具备从ConcurrentHashMap取值的条件.
+                            //true&& true =true
+                            if (AlarmTaskService.excAlarmResultHashMap.get(stationId) && AlarmTaskService.excRuleResultHashMap.get(stationId)) {
+                                //满足
+                                kafkaManageService.start();
+                                break;
+                            }
+                        }
+                    }
+                    // 满足条件之后,我们 我们先从concurrentHashMap里面查 --> 取数据(并且本次数据也不会丢失) --> 因为线程一直在做 while 循环判断
+                    Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(stationId);
+                    if (ruleMapByStationId != null || ruleMapByStationId.size() != 0) {
+                        List<AlarmRule> alarmRules = ruleMapByStationId.get(spId);
+                        for (AlarmRule alarmRule : alarmRules) {
+                            //根据alarm_Rule_id去查找alarmType
+                            if (alarmRule.getId().equals(alarmRuleId)) {
+                                //这就是找到了,取alarmType
+                                int alarmType1 = alarmRule.getAlarmType();
+                                alarmRealTimeInfos.setAlarmType(alarmType1);
+                                break;
+                            }
+                        }
+                        //组装完毕 --> 将对象添加到告警对应的ConcurrentHashMap中
+                        Map<String, List<AlarmRealTimeInfos>> realInfoMapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
+                        //不管告警是升高了还是降低了 --> 都覆盖.
+                        ArrayList<AlarmRealTimeInfos> ruleTimeInfoList= new ArrayList<>();
+                        ruleTimeInfoList.add(alarmRealTimeInfos);
+                        realInfoMapByStationId.put(spId,ruleTimeInfoList);
+                    }
+                }
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
 
     }
 }
