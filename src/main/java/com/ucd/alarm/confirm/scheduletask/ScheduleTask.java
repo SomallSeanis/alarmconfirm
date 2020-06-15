@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
  * @Version 1.0
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
-
 @Slf4j
 @Component
 public class ScheduleTask {
@@ -30,17 +29,14 @@ public class ScheduleTask {
     @Autowired
     AlarmRuleService alarmRuleService;
 
-/**
+    /**
      * @return void
      * @throws
      * @author Crayon
      * @Description 车站id为1的定时任务
      * @date 2020/6/12 4:39 上午
      * @params []
- */
-
-
-
+     */
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskOne() throws Exception {
@@ -54,14 +50,15 @@ public class ScheduleTask {
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwo() throws Exception {
-        long  startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         Integer stationId = BusinessConstants.StationId.DA_HE_GENG_STATION;
         boolean isGetCache = isGetCache(stationId);
-        if (isGetCache) { //true的话,代表可以执行
+        // true的话,代表可以执行
+        if (isGetCache) {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
         long endTime = System.currentTimeMillis();
-        System.out.println("一个线程从执行到结束总共耗时为+"+(endTime-startTime)+"ms");
+        System.out.println("一个线程从执行到结束总共耗时为+" + (endTime - startTime) + "ms");
 
     }
 
@@ -74,6 +71,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFourth() throws Exception {
@@ -83,6 +81,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFifth() throws Exception {
@@ -92,6 +91,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSixth() throws Exception {
@@ -101,6 +101,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSeventh() throws Exception {
@@ -110,6 +111,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskEighth() throws Exception {
@@ -119,6 +121,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskNinth() throws Exception {
@@ -128,6 +131,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTenth() throws Exception {
@@ -137,6 +141,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskEleventh() throws Exception {
@@ -146,6 +151,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwelfth() throws Exception {
@@ -155,6 +161,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirteenth() throws Exception {
@@ -164,6 +171,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFourteenth() throws Exception {
@@ -174,6 +182,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFifteenth() throws Exception {
@@ -183,6 +192,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSixteenth() throws Exception {
@@ -192,6 +202,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSeventeenth() throws Exception {
@@ -201,6 +212,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskEighteenth() throws Exception {
@@ -210,6 +222,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskNineteenth() throws Exception {
@@ -219,6 +232,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentieth() throws Exception {
@@ -228,6 +242,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyFirst() throws Exception {
@@ -237,6 +252,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentySecond() throws Exception {
@@ -246,6 +262,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTwentyThird() throws Exception {
@@ -255,6 +272,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyFourth() throws Exception {
@@ -264,6 +282,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyFifth() throws Exception {
@@ -273,6 +292,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentySixth() throws Exception {
@@ -282,6 +302,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentySeventh() throws Exception {
@@ -291,6 +312,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyEighth() throws Exception {
@@ -300,6 +322,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyNinth() throws Exception {
@@ -309,7 +332,8 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
-//    @Scheduled(cron = "0/10 * * * * ?")
+
+    //    @Scheduled(cron = "0/10 * * * * ?")
 //    @Async("defaultThreadPool")
 //    public void getRedisValueTaskThirty() throws Exception {
 //        Integer stationId = BusinessConstants.StationId.CONTORL_CENTER;
@@ -327,6 +351,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyTwo() throws Exception {
@@ -336,6 +361,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyThree() throws Exception {
@@ -345,6 +371,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyFour() throws Exception {
@@ -354,6 +381,7 @@ public class ScheduleTask {
             boolean flag = alarmService.updataAlarmLevelResult(stationId);
         }
     }
+
     @Scheduled(cron = "0/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyFive() throws Exception {
@@ -370,11 +398,12 @@ public class ScheduleTask {
         alarmRealTimeInfosService.getAlarmLists();
         alarmRuleService.getAlarmRuleLists();
     }
+
     private boolean isGetCache(Integer stationId) {
         boolean isAlarmReady = AlarmTaskService.excAlarmResultHashMap.get(stationId);
         boolean isRuleReady = AlarmTaskService.excRuleResultHashMap.get(stationId);
-        if(AlarmTaskService.excAlarmResultHashMap.get(stationId)==null||AlarmTaskService.excRuleResultHashMap.get(stationId)==null){
-           return false;
+        if (AlarmTaskService.excAlarmResultHashMap.get(stationId) == null || AlarmTaskService.excRuleResultHashMap.get(stationId) == null) {
+            return false;
         }
         return isAlarmReady && isRuleReady;
     }

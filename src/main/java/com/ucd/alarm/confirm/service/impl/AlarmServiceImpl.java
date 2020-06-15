@@ -1,10 +1,7 @@
 package com.ucd.alarm.confirm.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.parser.Feature;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+
 import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
 import com.ucd.alarm.confirm.entity.AlarmRule;
@@ -12,7 +9,6 @@ import com.ucd.alarm.confirm.enums.PointValueEnum;
 import com.ucd.alarm.confirm.service.AlarmRuleService;
 import com.ucd.alarm.confirm.service.AlarmService;
 import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
-import com.ucd.alarm.confirm.utils.RedisTemplateUtil;
 import com.ucd.alarm.confirm.utils.StringRedisTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +17,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 /**
@@ -51,9 +47,6 @@ public class AlarmServiceImpl implements AlarmService {
     @Autowired
     StringRedisTemplate stringRedisTemplate;
 
-    @Resource
-    private RedisTemplateUtil redisTemplateUtil;
-
     private final AlarmRuleService alarmRuleService;
 
     /**
@@ -69,73 +62,57 @@ public class AlarmServiceImpl implements AlarmService {
         List<Map<String, String>> hashMapListStream = new ArrayList<Map<String, String>>();
         // 查询告警缓存数据
         List<Object> alarmRedisList = stringRedisTemplateUtil.pipelinedList(redisKeys, hashKeys);
-
         Map<String, Map<String, String>> hashMapMapStream = new LinkedHashMap<>(16);
+        // todo 测试过后再启用此方法
+        // Optional.ofNullable(alarmRedisList.);
+        /** List<Object> = List<List<String>>*/
+        if (!ObjectUtils.isEmpty(alarmRedisList) && alarmRedisList.size() > 0) {
+            alarmRedisList.forEach(obj -> {
+                List<String> hashValueListParallelStream = new ArrayList<>();
+                if (obj instanceof List<?>) {
+                    List<String> linkedHashMaps = (List<String>) obj;
+                    List<Integer> errorPointIndex = new ArrayList<>();
+                    List<String> errorPoint = new ArrayList<>();
+                    for (int k = 0; k < linkedHashMaps.size(); k++) {
+                        if (ObjectUtils.isEmpty(linkedHashMaps.get(k)) || StringUtils.isEmpty(linkedHashMaps.get(k))) {
+                            errorPoint.add(hashKeys.get(k));
+                            errorPointIndex.add(k);
+                        }
+                    }
+                    log.info("不可用的点 hashKeys 信息为【{}】", errorPoint.toString());
+                    log.info("不可用的点 hashKeys 的位置信息为【{}】", errorPointIndex.toString());
 
-        //fixme 临时处理，只取第一个，逻辑后续要优化
-        List<String> linkedHashMaps = (List<String>) alarmRedisList.get(0);
-        //排除查询中不可用的点，并将其从两个集合中移除
-        List<Integer> errorPointIndex = new ArrayList<>();
-        List<String> errorPoint = new ArrayList<>();
-        for (int k = 0; k < linkedHashMaps.size(); k++) {
-            if (ObjectUtils.isEmpty(linkedHashMaps.get(k)) || linkedHashMaps.get(k) == null || linkedHashMaps.get(k).equals("")) {
-                errorPoint.add(hashKeys.get(k));
-                errorPointIndex.add(k);
+                    final int[] tmp = {0};
+                    errorPointIndex.stream().forEachOrdered(i -> {
+                        linkedHashMaps.remove(i - tmp[0]);
+                        hashKeys.remove(i - tmp[0]);
+                        tmp[0]++;
+                    });
+                    log.info("================linkedHashMaps：过滤后redis缓存种查找的真实有效的size【{}】", linkedHashMaps.size());
+                    log.info("================hashKeys:将不可用的点过滤后size大小为【{}】", hashKeys.size());
+                    /** linkedHashMaps = List<String>  redis中的Value值 JSON对象 */
+                    linkedHashMaps.parallelStream().forEachOrdered(o -> {
+                        JSONObject jsonObject = JSONObject.parseObject(o);
+                        String type = jsonObject.getString(POINT_TYPE);
+                        String fieldName = this.getPointField(type, jsonObject);
+                        hashValueListParallelStream.add(fieldName);
+                    });
+                    Map<String, String> resultMap = new LinkedHashMap<String, String>(16);
+
+                    // todo 异常情况处理 暂时缺少
+                    if (hashKeys.size() != hashValueListParallelStream.size()) {
+                        log.error("数据异常，缺数据");
+                    }
+                    for (int i = 0; i < hashValueListParallelStream.size(); i++) {
+                        resultMap.put(hashKeys.get(i), hashValueListParallelStream.get(i));
+                    }
+                    hashMapListStream.add(resultMap);
+                }
+            });
+            for (int i = 0; i < redisKeys.size(); i++) {
+                hashMapMapStream.put(redisKeys.get(i), hashMapListStream.get(i));
             }
         }
-        int tmp = 0;
-        for (Integer i : errorPointIndex) {
-            linkedHashMaps.remove(i - tmp);
-            hashKeys.remove(i - tmp);
-            tmp++;
-        }
-        List<String> hashValueListParallelStream = new ArrayList<>();
-        for (String s : linkedHashMaps) {
-            JSONObject jsonObject = JSONObject.parseObject(s);
-            String type = jsonObject.getString(POINT_TYPE);
-            String fieldName = this.getPointField(type, jsonObject);
-            hashValueListParallelStream.add(fieldName);
-        }
-        Map<String, String> resultMap = new LinkedHashMap<String, String>(16);
-        if (hashKeys.size() != hashValueListParallelStream.size()) {
-            log.error("数据异常，缺数据");
-        }
-        for (int i = 0; i < hashValueListParallelStream.size(); i++) {
-            resultMap.put(hashKeys.get(i), hashValueListParallelStream.get(i));
-        }
-        hashMapListStream.add(resultMap);
-        for (int i = 0; i < redisKeys.size(); i++) {
-            hashMapMapStream.put(redisKeys.get(i), hashMapListStream.get(i));
-        }
-//        // todo 测试过后再启用此方法
-//        // Optional.ofNullable(alarmRedisList.);
-//        Map<String, Map<String, String>> hashMapMapStream = new LinkedHashMap<>(16);
-//        // List<Object> = List<List<String>>
-//        if (!ObjectUtils.isEmpty(alarmRedisList)) {
-//            alarmRedisList.forEach(obj -> {
-//                List<String> hashValueListParallelStream = new ArrayList<>();
-//                if (obj instanceof List<?>) {
-//                    // obj = List<String>  redis中的Value值 JSON对象
-//                    ((List<String>) obj).stream().forEachOrdered(o -> {
-//                        JSONObject jsonObject = JSONObject.parseObject(o);
-//                        String type = jsonObject.getString(POINT_TYPE);
-//                        String fieldName = this.getPointField(type, jsonObject);
-//                        hashValueListParallelStream.add(fieldName);
-//                    });
-//                    Map<String, String> resultMap = new LinkedHashMap<String, String>(16);
-//                    if (hashKeys.size() != hashValueListParallelStream.size()) {
-//                        log.error("数据异常，缺数据");
-//                    }
-//                    for (int i = 0; i < hashValueListParallelStream.size(); i++) {
-//                        resultMap.put(hashKeys.get(i), hashValueListParallelStream.get(i));
-//                    }
-//                    hashMapListStream.add(resultMap);
-//                }
-//            });
-//            for (int i = 0; i < redisKeys.size(); i++) {
-//                hashMapMapStream.put(redisKeys.get(i), hashMapListStream.get(i));
-//            }
-//        }
         return hashMapMapStream;
     }
 
@@ -165,18 +142,16 @@ public class AlarmServiceImpl implements AlarmService {
         for (Map.Entry<String, List<AlarmRealTimeInfos>> entrySet : mapByStationId.entrySet()) {
             List<AlarmRealTimeInfos> alarmInfos = entrySet.getValue();
             List<AlarmRealTimeInfos> alarmRealTimeInfosList = new ArrayList<>();
-            for (AlarmRealTimeInfos alarmRealTimeInfos:alarmInfos) {
-                    if(ObjectUtils.isEmpty(alarmRealTimeInfos.getAlarmType())){
-                        continue;
-                    }
-                    alarmRealTimeInfosList.add(alarmRealTimeInfos);
+            for (AlarmRealTimeInfos alarmRealTimeInfos : alarmInfos) {
+                if (ObjectUtils.isEmpty(alarmRealTimeInfos.getAlarmType())) {
+                    continue;
+                }
+                alarmRealTimeInfosList.add(alarmRealTimeInfos);
             }
-            mapByStationId.put(entrySet.getKey(),alarmRealTimeInfosList);
+            mapByStationId.put(entrySet.getKey(), alarmRealTimeInfosList);
         }
         ThreadLocal<Map<String, List<AlarmRealTimeInfos>>> threadAlarmLocal = new ThreadLocal<>();
         threadAlarmLocal.set(mapByStationId);
-
-
 
         // 获取告警信息表中的所有stationId_pointId
         List<String> listStationIdPointId = threadAlarmLocal.get().keySet().stream().collect(Collectors.toList());
