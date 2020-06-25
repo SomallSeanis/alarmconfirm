@@ -3,6 +3,7 @@ package com.ucd.alarm.confirm.msg;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
 import com.ucd.alarm.confirm.entity.AlarmRule;
 import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
@@ -31,14 +32,13 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+
+//告警信息的 kafka 消费者类
 public class AlarmMsgConsumer {
 
     //组内竞争,组间共享 -->  不同的组通过同一个 topic 拿到的数据是一样的.
     //优先使用类文件中的groupid, 如果类文件中未定义groupid, 则才会使用配置文件中的groupid, 两者并不会产生冲突.
     private final static String groupid = "alarmconfirm";
-
-    //管控kafka数据传输的开关
-    private final KafkaManageService kafkaManageService;
 
     /***
      * @author liuxin
@@ -81,7 +81,6 @@ public class AlarmMsgConsumer {
     //在这个方法里面,我们需要将信息接入到ConcurrentHashMap中.
     public void dealAlarmInfo(Object message) {
         String alarmInfo = String.valueOf(message);
-        log.info(alarmInfo);
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             Map everyAlarmInfo = objectMapper.readValue(alarmInfo, Map.class);
@@ -115,12 +114,17 @@ public class AlarmMsgConsumer {
                     alarmRealTimeInfos.setAlarmSource("KafKa");
                     alarmRealTimeInfos.setMaxTime(alarmDateTime);
                     //我们这从 ConcurrentHashMap 集合中去拿那个alarmType状态值
-                    // 只要有一个 false 就会进去
+
+                    //我们先循环去判断 --> 看这两个map是否为null, 因为kafka这里执行的比较早,可能 这边已经执行了,但是那边的这两个Map还没有初始化. --> 就会导致空指针异常!
                     while (true) {
+                        //false && false //true && true
                         if (!ObjectUtils.isEmpty(AlarmTaskService.excAlarmResultHashMap) && !ObjectUtils.isEmpty(AlarmTaskService.excRuleResultHashMap)) {
-                            break;
+                            if (AlarmTaskService.excAlarmResultHashMap.size() == BusinessConstants.STATION_COUNT && AlarmTaskService.excRuleResultHashMap.size() == BusinessConstants.STATION_COUNT) {
+                                break;
+                            }
                         }
                     }
+                    
                     if (!AlarmTaskService.excAlarmResultHashMap.get(stationId) || !AlarmTaskService.excRuleResultHashMap.get(stationId)) {
                         //不符合条件 --> kafka 就先暂停发送数据
 //                                kafkaManageService.stop();
@@ -156,6 +160,7 @@ public class AlarmMsgConsumer {
                         //组装完毕 --> 将对象添加到告警对应的ConcurrentHashMap中
                         Map<String, List<AlarmRealTimeInfos>> realInfoMapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
                         //不管告警是升高了还是降低了 --> 都覆盖.
+                        log.info("stationId" + stationId + "权限告警表ConcurrentHashMap的大小是" + realInfoMapByStationId.size());
                         ArrayList<AlarmRealTimeInfos> ruleTimeInfoList = new ArrayList<>();
                         ruleTimeInfoList.add(alarmRealTimeInfos);
                         realInfoMapByStationId.put(spId, ruleTimeInfoList);
