@@ -392,7 +392,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/60 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void getReloadData() throws Exception {
         log.info("重新从库中加载数据");
         alarmRealTimeInfosService.getAlarmLists();
@@ -400,11 +400,14 @@ public class ScheduleTask {
     }
 
     private boolean isGetCache(Integer stationId) {
-        boolean isAlarmReady = AlarmTaskService.excAlarmResultHashMap.get(stationId);
-        boolean isRuleReady = AlarmTaskService.excRuleResultHashMap.get(stationId);
-        if (AlarmTaskService.excAlarmResultHashMap.get(stationId) == null || AlarmTaskService.excRuleResultHashMap.get(stationId) == null) {
-            return false;
+        if(AlarmTaskService.excRuleResultHashMap !=null && AlarmTaskService.excAlarmResultHashMap!=null){
+            boolean isAlarmReady = AlarmTaskService.excAlarmResultHashMap.get(stationId);
+            boolean isRuleReady = AlarmTaskService.excRuleResultHashMap.get(stationId);
+            if (AlarmTaskService.excAlarmResultHashMap.get(stationId) == null || AlarmTaskService.excRuleResultHashMap.get(stationId) == null) {
+                return false;
+            }
+            return isAlarmReady && isRuleReady;
         }
-        return isAlarmReady && isRuleReady;
+        return false;
     }
 }

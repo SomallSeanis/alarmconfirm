@@ -91,9 +91,13 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
     private void doUpdata(int stationId, int alarmType, int pointId, String time,int order) throws DataAccessException {
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
-        synchronized (this) {
-            jdbcHikariTemplate.update(sql);
-        }
+        //这个不加的话 sqlServer会报错 --> 产生死锁问题
+        log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);;
+
+//        synchronized (this) {
+//           // log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);;
+//          //  jdbcHikariTemplate.update(sql);
+//        }
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {
             mapByStationId.remove(stationId + "_" + pointId);

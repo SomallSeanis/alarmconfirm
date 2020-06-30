@@ -124,7 +124,7 @@ public class AlarmMsgConsumer {
                             }
                         }
                     }
-                    
+
                     if (!AlarmTaskService.excAlarmResultHashMap.get(stationId) || !AlarmTaskService.excRuleResultHashMap.get(stationId)) {
                         //不符合条件 --> kafka 就先暂停发送数据
 //                                kafkaManageService.stop();
@@ -138,7 +138,6 @@ public class AlarmMsgConsumer {
                             }
                         }
                     }
-
 
                     // 满足条件之后,我们 我们先从concurrentHashMap里面查 --> 取数据(并且本次数据也不会丢失) --> 因为线程一直在做 while 循环判断
                     Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(stationId);
@@ -160,7 +159,7 @@ public class AlarmMsgConsumer {
                         //组装完毕 --> 将对象添加到告警对应的ConcurrentHashMap中
                         Map<String, List<AlarmRealTimeInfos>> realInfoMapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
                         //不管告警是升高了还是降低了 --> 都覆盖.
-                        log.info("stationId" + stationId + "权限告警表ConcurrentHashMap的大小是" + realInfoMapByStationId.size());
+                        log.info("stationId" + stationId + "的kafka执行完方法,权限告警表ConcurrentHashMap的大小是" + realInfoMapByStationId.size());
                         ArrayList<AlarmRealTimeInfos> ruleTimeInfoList = new ArrayList<>();
                         ruleTimeInfoList.add(alarmRealTimeInfos);
                         realInfoMapByStationId.put(spId, ruleTimeInfoList);
@@ -170,6 +169,5 @@ public class AlarmMsgConsumer {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-
     }
 }

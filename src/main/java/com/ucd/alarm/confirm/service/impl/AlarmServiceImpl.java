@@ -126,6 +126,8 @@ public class AlarmServiceImpl implements AlarmService {
      */
     @Override
     public Boolean updataAlarmLevelResult(Integer stationId) throws Exception {
+        log.info(stationId+"进入updata方法");
+
         // 获取告警表信息
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() == 0) {
@@ -155,9 +157,10 @@ public class AlarmServiceImpl implements AlarmService {
 
         // 获取告警信息表中的所有stationId_pointId
         List<String> listStationIdPointId = threadAlarmLocal.get().keySet().stream().collect(Collectors.toList());
+        log.info(stationId+"站点值listStationIdPointId为{}",listStationIdPointId.size());
         // 查询redis中所有点值信息
         Map<String, Map<String, String>> stringMapMap = this.hashMapListStream(this.getRedisKeyList(), listStationIdPointId);
-
+        log.info(stationId+"站点值stationmapsize为{}",stringMapMap.size());
         if (ObjectUtils.isEmpty(stringMapMap)) {
             log.error("【{}】:此车站redis信息异常", stationId);
             return false;

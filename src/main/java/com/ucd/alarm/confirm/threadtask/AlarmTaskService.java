@@ -6,6 +6,7 @@ import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
 import com.ucd.alarm.confirm.entity.AlarmRule;
 import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,27 +33,33 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version 1.0
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
+@Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmTaskService {
 
-    public static final Map<Integer, Boolean> excAlarmResultHashMap = new ConcurrentHashMap<>();
-    public static final Map<Integer, Boolean> excRuleResultHashMap = new ConcurrentHashMap<>();
+  //  public static final Map<Integer, Boolean> excAlarmResultHashMap = new ConcurrentHashMap<>();
+  //  public static final Map<Integer, Boolean> excRuleResultHashMap = new ConcurrentHashMap<>();
+    public static final Map<Integer, Boolean> excAlarmResultHashMap = new HashMap<>();
+    public static final Map<Integer, Boolean> excRuleResultHashMap = new HashMap<>();
     @Qualifier("jdbcHikariTemplate")
     private final JdbcTemplate jdbcHikariTemplate;
 
     @Async("reloadDataThreadPool")
     public void getAlarmListByStationId(int stationId) {
         excAlarmResultHashMap.put(stationId, false);
+
         //根据站ID查询对应SQL
         String sql = AlarmSqlCacheConstants.getSqlByStationId(stationId);
+        //这就是那个车站对应的用于存储信息的ConcurrentHashMap
         Map<String, List<AlarmRealTimeInfos>> resultMap = MemoryCacheUtils.getMapByStationId(stationId);
         resultMap.clear();
+        log.info("alarmstation{},alarmmapsize{}",stationId,resultMap.size());
         //根据站ID查询告警
         jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRealTimeInfos>>() {
             @Override
             public List<AlarmRealTimeInfos> extractData(ResultSet resultSet) throws SQLException, DataAccessException {
-                List<AlarmRealTimeInfos> list = new ArrayList<>();
+                List<AlarmRealTimeInfos> list = new ArrayList<>(); //这个list没用, 完全是为了有个返回值.
                 while (resultSet.next()) {
 
                     AlarmRealTimeInfos alarmRealTimeInfos = new AlarmRealTimeInfos();
@@ -64,16 +72,17 @@ public class AlarmTaskService {
                     alarmRealTimeInfos.setSpId(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"));
                     alarmRealTimeInfos.setAlarmSource("SQL");
 
-                    if (resultMap.containsKey(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"))) {
-                        List<AlarmRealTimeInfos> tmpList = resultMap.get(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"));
-                        tmpList.add(alarmRealTimeInfos);
-                        resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), tmpList);
+                    if (resultMap.containsKey(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"))) {//先判断ConcurrentHashMap中有无这个键.
+                        List<AlarmRealTimeInfos> tmpList = resultMap.get(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId")); //把这个键的值取出来.
+                        tmpList.add(alarmRealTimeInfos);//添加上新的一条
+                        resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), tmpList);//这个逻辑是正确的
                     } else {
                         List<AlarmRealTimeInfos> alarmList = new ArrayList<>();
                         alarmList.add(alarmRealTimeInfos);
                         resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), alarmList);
                     }
                 }
+                log.info("alarmrealtimeinfos表查询结果alarmstation{},alarmmapsize{}",stationId,resultMap.size());
                 return list;
             }
         });
@@ -86,6 +95,8 @@ public class AlarmTaskService {
         excRuleResultHashMap.put(stationId, false);
         String sql = AlarmRuleSqlCacheConstants.getSqlByStationId(stationId);
         Map<String, List<AlarmRule>> resultMap = MemoryCacheUtils.getRuleMapByStationId(stationId);
+        resultMap.clear();
+        log.info("rulestation{},rulemapsize{}",stationId,resultMap.size());
         //根据站ID查询告警
         List<AlarmRule> mapList = jdbcHikariTemplate.query(sql, new ResultSetExtractor<List<AlarmRule>>() {
 
@@ -113,6 +124,7 @@ public class AlarmTaskService {
                         resultMap.put(resultSet.getInt("StationId") + "_" + resultSet.getInt("PointId"), alarmList);
                     }
                 }
+                log.info("rule表查询结果rulestation{},rulemapsize{}",stationId,resultMap.size());
                 return list;
             }
         });
