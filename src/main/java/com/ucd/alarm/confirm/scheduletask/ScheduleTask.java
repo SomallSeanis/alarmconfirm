@@ -47,7 +47,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "1/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwo() throws Exception {
         long startTime = System.currentTimeMillis();
@@ -62,7 +62,7 @@ public class ScheduleTask {
 
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "2/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThree() throws Exception {
         Integer stationId = BusinessConstants.StationId.HAI_TUN_LU_STATION;
@@ -72,7 +72,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "3/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFourth() throws Exception {
         Integer stationId = BusinessConstants.StationId.XIAO_TUN_STATION;
@@ -82,7 +82,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "4/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFifth() throws Exception {
         Integer stationId = BusinessConstants.StationId.JIN_DING_SHAN_BEI_LU_STATION;
@@ -92,7 +92,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "5/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSixth() throws Exception {
         Integer stationId = BusinessConstants.StationId.SU_JIA_TANG_STATION;
@@ -102,7 +102,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "6/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSeventh() throws Exception {
         Integer stationId = BusinessConstants.StationId.XIAO_CAI_YUAN_STATION;
@@ -112,7 +112,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "7/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskEighth() throws Exception {
         Integer stationId = BusinessConstants.StationId.HUO_CHE_BEI_STATION;
@@ -122,7 +122,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "8/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskNinth() throws Exception {
         Integer stationId = BusinessConstants.StationId.BAI_LONG_LU_STATION;
@@ -132,7 +132,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "9/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.DA_SHU_YING_STATION;
@@ -142,7 +142,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "10/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskEleventh() throws Exception {
         Integer stationId = BusinessConstants.StationId.JU_HUA_CUN_STATION;
@@ -152,7 +152,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "11/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwelfth() throws Exception {
         Integer stationId = BusinessConstants.StationId.JU_HUA_STATION;
@@ -162,7 +162,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "12/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirteenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.HE_DIAN_YING_STATION;
@@ -172,7 +172,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "13/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFourteenth() throws Exception {
 
@@ -183,7 +183,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "14/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskFifteenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.ZHU_JIA_CUN_STATION;
@@ -193,7 +193,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "15/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSixteenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.YANG_FU_TOU_STATION;
@@ -203,7 +203,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "16/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskSeventeenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.YU_YUAN_LU_STATION;
@@ -213,7 +213,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "17/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskEighteenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.GUANG_WEI_STATION;
@@ -223,7 +223,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "18/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskNineteenth() throws Exception {
         Integer stationId = BusinessConstants.StationId.TA_MI_STATION;
@@ -233,7 +233,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "19/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentieth() throws Exception {
         Integer stationId = BusinessConstants.StationId.DOU_NAN_STATION;
@@ -243,7 +243,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "20/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyFirst() throws Exception {
         Integer stationId = BusinessConstants.StationId.JIN_GUI_JIE_STATION;
@@ -253,7 +253,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "21/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentySecond() throws Exception {
         Integer stationId = BusinessConstants.StationId.MEI_ZI_CUN_STATION;
@@ -263,7 +263,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "22/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTwentyThird() throws Exception {
         Integer stationId = BusinessConstants.StationId.GU_CHENG_STATION;
@@ -273,7 +273,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "23/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyFourth() throws Exception {
         Integer stationId = BusinessConstants.StationId.KE_LE_CUN_STATION;
@@ -283,7 +283,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "24/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyFifth() throws Exception {
         Integer stationId = BusinessConstants.StationId.XIANG_FENG_JIE_STATION;
@@ -293,7 +293,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "25/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentySixth() throws Exception {
         Integer stationId = BusinessConstants.StationId.NIU_ROU_SHAN_STATION;
@@ -303,7 +303,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "26/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentySeventh() throws Exception {
         Integer stationId = BusinessConstants.StationId.LIAN_DA_JIE_STATION;
@@ -313,7 +313,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "27/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyEighth() throws Exception {
         Integer stationId = BusinessConstants.StationId.WU_JIA_YING_STATION;
@@ -323,7 +323,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "28/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskTwentyNinth() throws Exception {
         Integer stationId = BusinessConstants.StationId.KUN_MING_HUO_CHE_NAN_STATION;
@@ -342,7 +342,7 @@ public class ScheduleTask {
 //            boolean flag = alarmService.updataAlarmLevelResult(stationId);
 //        }
 //    }
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "29/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyOne() throws Exception {
         Integer stationId = BusinessConstants.StationId.MA_XUN_ZHU_BIAN_DIAN_SUO;
@@ -352,7 +352,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "30/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyTwo() throws Exception {
         Integer stationId = BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN;
@@ -362,7 +362,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "31/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyThree() throws Exception {
         Integer stationId = BusinessConstants.StationId.HUO_CHE_BEI_CONTORL_CENTER;
@@ -372,7 +372,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "32/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyFour() throws Exception {
         Integer stationId = BusinessConstants.StationId.BAI_LONG_TAN_PART;
@@ -382,7 +382,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "33/10 * * * * ?")
     @Async("defaultThreadPool")
     public void getRedisValueTaskThirtyFive() throws Exception {
         Integer stationId = BusinessConstants.StationId.GUANG_WEI_PART;
@@ -392,7 +392,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/30 * * * * ?")
+    @Scheduled(cron = "0/45 * * * * ?")
     public void getReloadAlarmInfoData() throws Exception {
         log.info("重新从库中加载AlarmInfos数据");
         alarmRealTimeInfosService.getAlarmLists();

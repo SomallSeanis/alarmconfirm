@@ -30,7 +30,13 @@ public class AlarmRealTimeInfosServiceImpl implements AlarmRealTimeInfosService 
     @Override
     public void getAlarmLists() throws InterruptedException {
         for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
+            Thread.sleep(500);
+            if(i == 32){
+                alarmTaskService.getAlarmListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
+                continue;
+            }
             alarmTaskService.getAlarmListByStationId(i);
+
         }
     }
 }
