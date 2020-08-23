@@ -21,6 +21,8 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
+//告警规则表对应的实体类
 public class AlarmRule implements Serializable {
     /**
      * 告警规则Id

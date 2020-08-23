@@ -11,6 +11,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -40,6 +41,9 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
     public final AlarmTaskService alarmTaskService;
 
+    private final Environment environment;
+
+
     @Override
     public void getAlarmRuleLists() {
         for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
@@ -60,6 +64,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         }
         int pointId = alarmRuleList.get(0).getPointId();
         String time = "\'" + maxTime + "\';";
+        //如果告警类型是超限告警类型
         if (alarmType == BusinessConstants.ALARM_LIMIT_TYPE) {
             float finalValue = value;
             List<AlarmRule> orderList = alarmRuleList.stream().filter(alarmRule -> (finalValue <= alarmRule.getHighLimit() && finalValue >= alarmRule.getLowLimit()))
@@ -71,16 +76,17 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
             //判断是否告警等级变小
             if (order >= alarmOrder) {
                 //执行自动确认sql
-                doUpdata(stationId, alarmType, pointId, time,order);
+                doUpdata(stationId, alarmType, pointId, time, order);
             }
         }
+        //如果告警类型不是超限告警类型
         if (alarmType != BusinessConstants.ALARM_LIMIT_TYPE) {
             for (int i = 0; i < alarmRuleList.size(); i++) {
                 if (i < 1) {
                     float highLimit = alarmRuleList.get(i).getHighLimit();
                     if (value != highLimit) {
                         //执行自动确认sql
-                        doUpdata(stationId, alarmType, pointId, time,alarmOrder);
+                        doUpdata(stationId, alarmType, pointId, time, alarmOrder);
                     }
                 }
 
@@ -89,15 +95,20 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         return isUpdata;
     }
 
-    private void doUpdata(int stationId, int alarmType, int pointId, String time,int order) throws DataAccessException {
+    private void doUpdata(int stationId, int alarmType, int pointId, String time, int order) throws DataAccessException {
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
         //这个不加的话 sqlServer会报错 --> 产生死锁问题
-        log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);;
+        log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
+        ;
 
-//        synchronized (this) {
-//           // log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);;
-//          //  jdbcHikariTemplate.update(sql);
-//        }
+        String needUpdate = environment.getProperty("needUpdate");
+        if ("true".equals(needUpdate)) {
+            synchronized (this) {
+                log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
+                jdbcHikariTemplate.update(sql);
+            }
+        }
+
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {
             mapByStationId.remove(stationId + "_" + pointId);

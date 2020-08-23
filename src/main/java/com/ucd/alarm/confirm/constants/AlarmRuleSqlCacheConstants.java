@@ -8,6 +8,7 @@ package com.ucd.alarm.confirm.constants;
  * @Version 1.0
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
+//这个是告警规则的sql
 public class AlarmRuleSqlCacheConstants {
 
     private static final String SQL_1 = "select A.EntityId as Id ,  A.AlarmType , A.StationId , A.PointId,A.HighLimit , A.LowLimit , C.[Order] as AlarmOrder from AlarmRule as A  LEFT JOIN AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where  A.StationId=1;";

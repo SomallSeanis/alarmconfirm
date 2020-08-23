@@ -22,7 +22,10 @@ import java.sql.SQLException;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+
+//告警实时信息表对应的实体类
 public class AlarmRealTimeInfos implements  Serializable {
+
     /**
      * Redis 查询的item值  stationId_pointId
      */

@@ -61,11 +61,13 @@ public class AlarmServiceImpl implements AlarmService {
     public Map<String, Map<String, String>> hashMapListStream(List<String> redisKeys, List<String> hashKeys) {
         List<Map<String, String>> hashMapListStream = new ArrayList<Map<String, String>>();
         // 查询告警缓存数据
+        //这个就是去查Redis了
         List<Object> alarmRedisList = stringRedisTemplateUtil.pipelinedList(redisKeys, hashKeys);
         Map<String, Map<String, String>> hashMapMapStream = new LinkedHashMap<>(16);
         // todo 测试过后再启用此方法
         // Optional.ofNullable(alarmRedisList.);
         /** List<Object> = List<List<String>>*/
+        //查Redis有值,并且不为空
         if (!ObjectUtils.isEmpty(alarmRedisList) && alarmRedisList.size() > 0) {
             alarmRedisList.forEach(obj -> {
                 List<String> hashValueListParallelStream = new ArrayList<>();
@@ -79,13 +81,15 @@ public class AlarmServiceImpl implements AlarmService {
                             errorPointIndex.add(k);
                         }
                     }
+                    //涉及到数组的移动 ---> 需要改
                     log.info("不可用的点 hashKeys 信息为【{}】", errorPoint.toString());
                     log.info("不可用的点 hashKeys 的位置信息为【{}】", errorPointIndex.toString());
 
                     final int[] tmp = {0};
-                    errorPointIndex.stream().forEachOrdered(i -> {
-                        linkedHashMaps.remove(i - tmp[0]);
-                        hashKeys.remove(i - tmp[0]);
+                    //把从Redis查出的错误的点删除掉
+                    errorPointIndex.stream().forEachOrdered(i -> { //
+                        linkedHashMaps.remove(i - tmp[0]); //把错误的点删除掉
+                        hashKeys.remove(i - tmp[0]);  //把
                         tmp[0]++;
                     });
                     log.info("================linkedHashMaps：过滤后redis缓存种查找的真实有效的size【{}】", linkedHashMaps.size());

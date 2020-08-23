@@ -8,6 +8,7 @@ import com.ucd.alarm.confirm.utils.RedisTemplateUtil;
 import com.ucd.alarm.confirm.utils.StringRedisTemplateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.StringRedisConnection;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
+import sun.misc.Unsafe;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -30,6 +32,7 @@ import java.util.*;
 @Slf4j
 @RequestMapping("/redis")
 @RestController
+@RefreshScope
 @Component
 public class RedisTestController {
 

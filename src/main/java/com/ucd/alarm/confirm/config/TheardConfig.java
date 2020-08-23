@@ -21,12 +21,15 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
 @Configuration
+//启动线程池配置
 @EnableAsync
 @Slf4j
+
+//我们这就是自定义线程池
 public class TheardConfig implements AsyncConfigurer {
 
     /***
-    * @Description: 告警服务使用的线程池
+    * @Description: 告警服务使用的线程池    --> 执行告警恢复任务的线程池
     * @param
     * @author  liuxin
     * @return  org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
@@ -34,6 +37,7 @@ public class TheardConfig implements AsyncConfigurer {
     * @date   2020/6/7 13:11
     */
     @Bean
+    //ThreadPoolTaskExecutor ：最常使用，推荐。 其实质是对java.util.concurrent.ThreadPoolExecutor的包装。
     public ThreadPoolTaskExecutor defaultThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //核心线程数目
@@ -55,6 +59,11 @@ public class TheardConfig implements AsyncConfigurer {
         return executor;
     }
 
+
+    /**
+     * 30分钟---> 执行重新加载数据库数据的线程池 --> 初始化concurrentHashMap的线程池也用他.
+     * @return
+     */
     @Bean(destroyMethod = "shutdown", name = "reloadDataThreadPool")
     public ThreadPoolTaskExecutor reloadDataThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
@@ -78,7 +87,7 @@ public class TheardConfig implements AsyncConfigurer {
     }
 
     /***
-    * @Description: 定时任务使用的线程池
+    * @Description: 定时任务使用的线程池  --->这个线程池只做与定时任务相关的事情 --> 具体执行告警任务的线程 是defaultThreadPool线程池中的线程.
     * @param
     * @author  liuxin
     * @return  org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler
@@ -86,11 +95,12 @@ public class TheardConfig implements AsyncConfigurer {
     * @date   2020/6/7 13:13
     */
     @Bean(destroyMethod = "shutdown", name = "alarmTaskScheduler")
+    //要注意: 定时任务使用的线程池(ThreadPoolTaskScheduler) 和 普通任务使用的线程池(ThreadPoolTaskExecutor) 不一样!
     public ThreadPoolTaskScheduler alarmTaskScheduler(){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(36);
+        scheduler.setPoolSize(37);
         scheduler.setThreadNamePrefix("alarmSchedulerTask-");
-        scheduler.setAwaitTerminationSeconds(1800);
+        scheduler.setAwaitTerminationSeconds(1800);//定时任务线程的最大等待时间30分钟
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
         return scheduler;
     }
@@ -112,7 +122,7 @@ public class TheardConfig implements AsyncConfigurer {
     @Override
     public AsyncUncaughtExceptionHandler getAsyncUncaughtExceptionHandler() {
         return (throwable, method, objects) -> {
-            log.error("异步任务执行出现异常, message {}, emthod {}, params {}", throwable, method, objects);
+            log.error("异步任务执行出现异常, message {}, method {}, params {}", throwable, method, objects);
         };
     }
 }

@@ -8,6 +8,8 @@ package com.ucd.alarm.confirm.constants;
  * @Version 1.0
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
+
+//这个是实时告警信息的sql
 public class AlarmSqlCacheConstants {
 
     private static final String SQL_1 = "select A.StationId, A.PointId, A.AlarmRuleId, C.[Order] as AlarmOrder, D.AlarmType as AlarmType , B.MaxTime from AlarmRealTimeInfoes as A INNER JOIN (select StationId, PointId,max(AlarmDateTime) as MaxTime from AlarmRealTimeInfoes WHERE AlarmStatus =0 and StationId = 1 group by StationId,PointId)B" +

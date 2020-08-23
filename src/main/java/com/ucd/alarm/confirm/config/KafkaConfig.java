@@ -30,11 +30,14 @@ import java.util.Map;
 @Configuration
 @EnableKafka
 @RefreshScope
+//这个是kafka的配置文件
 public class KafkaConfig {
-    
+
+    //这个是指定kafka server的地址   我们生产的信息要发布到这里, 我们监听的topic,也是从这几台kafka server 上监听.
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
+    //设置自动提交offset
     @Value("${spring.kafka.consumer.enable-auto-commit}")
     private Boolean autoCommit;
 

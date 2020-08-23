@@ -23,6 +23,7 @@ import javax.sql.DataSource;
 @Configuration
 @ConfigurationProperties(prefix = "spring.datasource.hikari")
 @Data
+//jdbcTemplate  这是JdbcTemplate --> 针对数据库操作的配置文件  --> 实例化jdbcTemplate对象
 public class JdbcTemplateConfig {
 
     private String jdbcUrl;

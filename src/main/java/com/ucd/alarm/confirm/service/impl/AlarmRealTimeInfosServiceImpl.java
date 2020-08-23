@@ -28,7 +28,7 @@ public class AlarmRealTimeInfosServiceImpl implements AlarmRealTimeInfosService 
     public final AlarmTaskService alarmTaskService;
 
     @Override
-    public void getAlarmLists() {
+    public void getAlarmLists() throws InterruptedException {
         for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
             alarmTaskService.getAlarmListByStationId(i);
         }

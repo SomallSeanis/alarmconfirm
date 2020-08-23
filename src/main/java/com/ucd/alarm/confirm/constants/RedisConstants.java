@@ -10,6 +10,7 @@ package com.ucd.alarm.confirm.constants;
  **/
 public final class RedisConstants {
 
+    //前缀
     static final String _PREFIX = "ars:";
 
     //缓存组

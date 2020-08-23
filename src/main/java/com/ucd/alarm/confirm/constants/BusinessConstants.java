@@ -8,6 +8,8 @@ package com.ucd.alarm.confirm.constants;
  * @Version 1.0
  * @Copyright: Copyright2018-2020 BJCJ Inc. All rights reserved.
  **/
+
+//业务常量
 public class BusinessConstants {
     /**车站总数*/
     public static final Integer STATION_COUNT = 35;

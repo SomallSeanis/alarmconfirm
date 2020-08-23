@@ -42,9 +42,12 @@ import java.util.Set;
  **/
 @RefreshScope
 @Configuration
+//Redis的配置信息
 public class RedisConfiguration {
+    //redis 集群节点
     @Value("${spring.redis.cluster.nodes}")
     private String clusterNodes;
+    //redis 超时时间
     @Value("${spring.redis.timeout}")
     private int timeout;
     @Value("${spring.redis.lettuce.pool.max-idle}")
@@ -67,8 +70,8 @@ public class RedisConfiguration {
     LettuceConnectionFactory lettuceConnectionFactory() {
         // 连接池配置
         GenericObjectPoolConfig poolConfig = new GenericObjectPoolConfig();
-        poolConfig.setMaxIdle(maxIdle == null ? 8 : maxIdle);
-        poolConfig.setMinIdle(minIdle == null ? 1 : minIdle);
+        poolConfig.setMaxIdle(maxIdle == null ? 880 : maxIdle);
+        poolConfig.setMinIdle(minIdle == null ? 880 : minIdle);
         poolConfig.setMaxWaitMillis(maxWaitMillis == null ? 5000L : maxWaitMillis);
         LettucePoolingClientConfiguration lettucePoolingClientConfiguration = LettucePoolingClientConfiguration.builder()
                 .poolConfig(poolConfig)

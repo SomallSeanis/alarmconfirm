@@ -19,10 +19,12 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 @Slf4j
+
+//定时任务配置类
 public class SchedulerConfig implements SchedulingConfigurer {
 
     @Qualifier("alarmTaskScheduler")
-    ThreadPoolTaskScheduler taskScheduler;
+    ThreadPoolTaskScheduler taskScheduler; //注入定时任务线程池
     @Override
     public void configureTasks(ScheduledTaskRegistrar scheduledTaskRegistrar) {
         scheduledTaskRegistrar.setScheduler(taskScheduler);
