@@ -180,7 +180,7 @@ public class AlarmSqlCacheConstants {
             case 31:
                 sql = SQL_31;
                 break;
-            case 32:
+            case 39:
                 sql = SQL_32;
                 break;
             case 33:

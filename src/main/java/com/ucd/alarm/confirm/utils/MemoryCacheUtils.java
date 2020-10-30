@@ -246,7 +246,7 @@ public class MemoryCacheUtils {
                 return STATION_THIRTY_CACHE_DATA;
             case 31:
                 return STATION_THIRTY_FIRST_CACHE_DATA;
-            case 32:
+            case 39:
                 return STATION_THIRTY_SECOND_CACHE_DATA;
             case 33:
                 return STATION_THIRTY_FOURTH_CACHE_DATA;
@@ -323,7 +323,7 @@ public class MemoryCacheUtils {
                 return STATION_THIRTY_RULE_CACHE_DATA;
             case 31:
                 return STATION_THIRTY_FIRST_RULE_CACHE_DATA;
-            case 32:
+            case 39:
                 return STATION_THIRTY_SECOND_RULE_CACHE_DATA;
             case 33:
                 return STATION_THIRTY_FOURTH_RULE_CACHE_DATA;

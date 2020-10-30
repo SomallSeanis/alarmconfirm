@@ -9,6 +9,7 @@ import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -18,6 +19,11 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
@@ -43,6 +49,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
     private final Environment environment;
 
+    public static final DateTimeFormatter SS_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSSSSS");
 
     @Override
     public void getAlarmRuleLists() {
@@ -54,7 +61,7 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
             }
             //将station ID为32替换为39
             if(i == 32){
-                alarmTaskService.getAlarmListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
+                alarmTaskService.getAlarmRuleListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
                 continue;
             }
             alarmTaskService.getAlarmRuleListByStationId(i);
@@ -109,7 +116,20 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
         //这个不加的话 sqlServer会报错 --> 产生死锁问题
         log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
-        ;
+        String selectSql = "select Id from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
+        //解析ID
+        List<Map<String, Object>> queryForList = jdbcHikariTemplate.queryForList(selectSql);
+        //获取当前时间
+        String nowtime = SS_FORMATTER.format(LocalDateTime.now(ZoneId.of("Asia/Shanghai"))) + " +08:00";
+        String insertSql="insert into AlarmComments (CommentTime,Person,AlarmRealTimeInfo_Id,CommentDetail) VALUES ";
+        for (int i = 0; i < queryForList.size(); i++) {
+            String id = String.valueOf(queryForList.get(i).get("Id"));
+            if(i==queryForList.size()-1){
+                insertSql+="('"+nowtime+"','AlarmReset','"+id+"','告警复归');";
+                break;
+            }
+            insertSql+="('"+nowtime+"','AlarmReset','"+id+"','告警复归'),";
+        }
 
         String needUpdate = environment.getProperty("needUpdate");
         if ("true".equals(needUpdate)) {
@@ -118,6 +138,12 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
                 jdbcHikariTemplate.update(sql);
             }
         }
+
+        //插入AlarmComments
+        log.info("insertbefor");
+        jdbcHikariTemplate.execute(insertSql);
+        log.info("insertafter="+insertSql);
+
 
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {

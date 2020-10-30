@@ -132,12 +132,12 @@ public class AlarmServiceImpl implements AlarmService {
     public Boolean updataAlarmLevelResult(Integer stationId) throws Exception {
         log.info(stationId+"进入updata方法");
 
-        // 获取告警表信息
+        // 获取车站ID为stationID的告警表信息
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() == 0) {
             return false;
         }
-        // 获取规则表Map  key为stationId_pointId，
+        // 获取车站ID为stationID的规则表Map  key为stationId_pointId，
         Map<String, List<AlarmRule>> ruleMapByStationId = MemoryCacheUtils.getRuleMapByStationId(stationId);
         if (ObjectUtils.isEmpty(ruleMapByStationId) || ruleMapByStationId.size() == 0) {
             return false;
@@ -190,15 +190,32 @@ public class AlarmServiceImpl implements AlarmService {
                 log.error("【{}】:告警类型不唯一,跳过本次操作", stationIdPointId);
                 return;
             }
-            // 获取告警类型
-            Integer alarmType = alarmRealTimeInfos.get(0).getAlarmType();
+            // 获取告警类型(从规则表中筛选出alarmtype)
+            String spId = alarmRealTimeInfos.get(0).getSpId();
+            String alarmRuleId = alarmRealTimeInfos.get(0).getAlarmRuleId();
+            Integer alarmType =0;
+            Map<String, List<AlarmRule>> ruleMapByStationIdTmp = MemoryCacheUtils.getRuleMapByStationId(stationId);
+            if (ruleMapByStationIdTmp.size() != 0) {
+                List<AlarmRule> alarmRules = ruleMapByStationIdTmp.get(spId);
+                if (alarmRules != null) {
+                    for (AlarmRule alarmRule : alarmRules) {
+                        //根据alarm_Rule_id去查找alarmType
+                        if (alarmRule.getId().equals(alarmRuleId)) {
+                            //这就是找到了,取alarmType
+                            alarmType = alarmRule.getAlarmType();
+                            break;
+                        }
+                    }
+                }
+            }
             // 获取规则数据
             List<AlarmRule> alarmRulesList = threadRuleLocal.get().get(stationIdPointId);
             if (ObjectUtils.isEmpty(alarmRulesList) || alarmRulesList.size() == 0) {
                 return;
             }
             // 根据当前告警类型获取告警规则数据
-            alarmRulesList = alarmRulesList.stream().filter(type -> alarmType.equals(type.getAlarmType())).collect(Collectors.toList());
+            Integer finalAlarmType = alarmType;
+            alarmRulesList = alarmRulesList.stream().filter(type -> finalAlarmType.equals(type.getAlarmType())).collect(Collectors.toList());
             // 调取 判断告警等级接口
             boolean isUpdata = alarmRuleService.doRuleCheck(stationId, pointValue, alarmOrderMax, alarmType, maxTime, alarmRulesList);
         });
