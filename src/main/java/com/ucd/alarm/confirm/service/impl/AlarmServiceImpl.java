@@ -145,7 +145,10 @@ public class AlarmServiceImpl implements AlarmService {
         ThreadLocal<Map<String, List<AlarmRule>>> threadRuleLocal = new ThreadLocal<>();
         threadRuleLocal.set(ruleMapByStationId);
 
-        for (Map.Entry<String, List<AlarmRealTimeInfos>> entrySet : mapByStationId.entrySet()) {
+        ThreadLocal<Map<String, List<AlarmRealTimeInfos>>> threadAlarmLocal = new ThreadLocal<>();
+        threadAlarmLocal.set(mapByStationId);
+        // 在threadlocal中操作数据筛选
+        for (Map.Entry<String, List<AlarmRealTimeInfos>> entrySet : threadAlarmLocal.get().entrySet()) {
             List<AlarmRealTimeInfos> alarmInfos = entrySet.getValue();
             List<AlarmRealTimeInfos> alarmRealTimeInfosList = new ArrayList<>();
             for (AlarmRealTimeInfos alarmRealTimeInfos : alarmInfos) {
@@ -154,11 +157,8 @@ public class AlarmServiceImpl implements AlarmService {
                 }
                 alarmRealTimeInfosList.add(alarmRealTimeInfos);
             }
-            mapByStationId.put(entrySet.getKey(), alarmRealTimeInfosList);
+            threadAlarmLocal.get().put(entrySet.getKey(), alarmRealTimeInfosList);
         }
-        ThreadLocal<Map<String, List<AlarmRealTimeInfos>>> threadAlarmLocal = new ThreadLocal<>();
-        threadAlarmLocal.set(mapByStationId);
-
         // 获取告警信息表中的所有stationId_pointId
         List<String> listStationIdPointId = threadAlarmLocal.get().keySet().stream().collect(Collectors.toList());
         log.info(stationId+"站点值listStationIdPointId为{}",listStationIdPointId.size());

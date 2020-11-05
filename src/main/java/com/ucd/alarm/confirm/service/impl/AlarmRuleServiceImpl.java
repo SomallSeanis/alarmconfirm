@@ -113,30 +113,31 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     }
 
     private void doUpdata(int stationId, int alarmType, int pointId, String time, int order) throws DataAccessException {
+        List<Map<String, Object>> queryForList = null;
+        //获取当前时间
+        String nowtime = SS_FORMATTER.format(LocalDateTime.now(ZoneId.of("Asia/Shanghai"))) + " +08:00";
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
         //这个不加的话 sqlServer会报错 --> 产生死锁问题
         log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
         String selectSql = "select Id from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
-        //解析ID
-        List<Map<String, Object>> queryForList = jdbcHikariTemplate.queryForList(selectSql);
-        //获取当前时间
-        String nowtime = SS_FORMATTER.format(LocalDateTime.now(ZoneId.of("Asia/Shanghai"))) + " +08:00";
-        String insertSql="insert into AlarmComments (CommentTime,Person,AlarmRealTimeInfo_Id,CommentDetail) VALUES ";
+        synchronized (this) {
+            //解析ID
+            queryForList = jdbcHikariTemplate.queryForList(selectSql);
+            String needUpdate = environment.getProperty("needUpdate");
+            if ("true".equals(needUpdate)) {
+            log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
+            jdbcHikariTemplate.update(sql);
+             }
+        }
+        if(queryForList==null ||queryForList.size()==0){return;}
+        String insertSql = "insert into AlarmComments (CommentTime,Person,AlarmRealTimeInfo_Id,CommentDetail) VALUES ";
         for (int i = 0; i < queryForList.size(); i++) {
             String id = String.valueOf(queryForList.get(i).get("Id"));
-            if(i==queryForList.size()-1){
-                insertSql+="('"+nowtime+"','AlarmReset','"+id+"','告警复归');";
+            if (i == queryForList.size() - 1) {
+                insertSql += "('" + nowtime + "','AlarmReset','" + id + "','告警复归');";
                 break;
             }
-            insertSql+="('"+nowtime+"','AlarmReset','"+id+"','告警复归'),";
-        }
-
-        String needUpdate = environment.getProperty("needUpdate");
-        if ("true".equals(needUpdate)) {
-            synchronized (this) {
-                log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
-                jdbcHikariTemplate.update(sql);
-            }
+            insertSql += "('" + nowtime + "','AlarmReset','" + id + "','告警复归'),";
         }
 
         //插入AlarmComments
