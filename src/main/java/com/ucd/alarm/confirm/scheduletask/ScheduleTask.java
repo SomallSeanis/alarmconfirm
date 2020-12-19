@@ -392,7 +392,7 @@ public class ScheduleTask {
         }
     }
 
-    @Scheduled(cron = "0/45 * * * * ?")
+    @Scheduled(cron = "* 0/1 * * * ?")
     public void getReloadAlarmInfoData() throws Exception {
         log.info("重新从库中加载AlarmInfos数据");
         alarmRealTimeInfosService.getAlarmLists();

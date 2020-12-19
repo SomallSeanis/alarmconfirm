@@ -1,6 +1,7 @@
 package com.ucd.alarm.confirm.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -19,10 +20,9 @@ import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 @Configuration
 @EnableScheduling
 @Slf4j
-
 //定时任务配置类
 public class SchedulerConfig implements SchedulingConfigurer {
-
+    @Autowired
     @Qualifier("alarmTaskScheduler")
     ThreadPoolTaskScheduler taskScheduler; //注入定时任务线程池
     @Override

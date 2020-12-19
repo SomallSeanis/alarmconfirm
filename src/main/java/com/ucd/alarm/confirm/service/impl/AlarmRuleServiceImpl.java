@@ -54,11 +54,6 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
     @Override
     public void getAlarmRuleLists() {
         for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             //将station ID为32替换为39
             if(i == 32){
                 alarmTaskService.getAlarmRuleListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);

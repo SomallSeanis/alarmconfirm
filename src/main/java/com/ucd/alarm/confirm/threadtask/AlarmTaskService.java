@@ -38,8 +38,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmTaskService {
 
-  //  public static final Map<Integer, Boolean> excAlarmResultHashMap = new ConcurrentHashMap<>();
-  //  public static final Map<Integer, Boolean> excRuleResultHashMap = new ConcurrentHashMap<>();
     public static final Map<Integer, Boolean> excAlarmResultHashMap = new HashMap<>();
     public static final Map<Integer, Boolean> excRuleResultHashMap = new HashMap<>();
     @Qualifier("jdbcHikariTemplate")

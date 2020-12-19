@@ -47,10 +47,12 @@ public class CommandLineRunnerImpl implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        //初始化 35个告警信息表的ConcurrentHashMap
-        alarmRealTimeInfosService.getAlarmLists();
         //初始化 35个规则信息表的ConcurrentHashMap
         alarmRuleService.getAlarmRuleLists();
+        //初始化 35个告警信息表的ConcurrentHashMap
+        alarmRealTimeInfosService.getAlarmLists();
+
+
         //初始化完成, isDown =true; 这个就是告诉定时任务,可以执行了.
         isDown=true;
         System.out.println("预备资源准备完毕");

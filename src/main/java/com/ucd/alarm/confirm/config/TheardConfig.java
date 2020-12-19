@@ -40,18 +40,20 @@ public class TheardConfig implements AsyncConfigurer {
     //ThreadPoolTaskExecutor ：最常使用，推荐。 其实质是对java.util.concurrent.ThreadPoolExecutor的包装。
     public ThreadPoolTaskExecutor defaultThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        //核心线程数目
-        executor.setCorePoolSize(35);
-        //指定最大线程数
-        executor.setMaxPoolSize(100);
-        //队列中最大的数目
-        executor.setQueueCapacity(70);
+        //核心线程数目  70
+        executor.setCorePoolSize(36);
+        //指定最大线程数   100
+        executor.setMaxPoolSize(54);
+        //队列中最大的数目    35
+        executor.setQueueCapacity(18);
+        //设置线程优先级
+        executor.setThreadPriority(10);
         //线程名称前缀
         executor.setThreadNamePrefix("alarmThreadPool-");
         //rejection-policy：当pool已经达到max size的时候，如何处理新任务
         //CALLER_RUNS：不在新线程中执行任务，而是由调用者所在的线程来执行
-        //对拒绝task的处理策略
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        //喜新厌旧策略(丢老的)
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardOldestPolicy());
         //线程空闲后的最大存活时间
         executor.setKeepAliveSeconds(300);
         //加载
@@ -68,17 +70,17 @@ public class TheardConfig implements AsyncConfigurer {
     public ThreadPoolTaskExecutor reloadDataThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //核心线程数目
-        executor.setCorePoolSize(0);
+        executor.setCorePoolSize(18);
         //指定最大线程数
-        executor.setMaxPoolSize(70);
+        executor.setMaxPoolSize(36);
         //队列中最大的数目
-        executor.setQueueCapacity(70);
+        executor.setQueueCapacity(18);
         //线程名称前缀
         executor.setThreadNamePrefix("reloadThreadPool-");
         //rejection-policy：当pool已经达到max size的时候，如何处理新任务
         //CALLER_RUNS：不在新线程中执行任务，而是由调用者所在的线程来执行
-        //对拒绝task的处理策略
-        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        //喜新厌旧策略
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardOldestPolicy());
         //线程空闲后的最大存活时间
         executor.setKeepAliveSeconds(30);
         //加载
@@ -98,7 +100,8 @@ public class TheardConfig implements AsyncConfigurer {
     //要注意: 定时任务使用的线程池(ThreadPoolTaskScheduler) 和 普通任务使用的线程池(ThreadPoolTaskExecutor) 不一样!
     public ThreadPoolTaskScheduler alarmTaskScheduler(){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(37);
+        //只管着定时任务的发放,10个定时任务线程足够了
+        scheduler.setPoolSize(5);
         scheduler.setThreadNamePrefix("alarmSchedulerTask-");
         scheduler.setAwaitTerminationSeconds(1800);//定时任务线程的最大等待时间30分钟
         scheduler.setWaitForTasksToCompleteOnShutdown(true);
