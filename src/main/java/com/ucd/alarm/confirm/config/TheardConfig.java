@@ -41,9 +41,9 @@ public class TheardConfig implements AsyncConfigurer {
     public ThreadPoolTaskExecutor defaultThreadPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         //核心线程数目  70
-        executor.setCorePoolSize(36);
+        executor.setCorePoolSize(41);
         //指定最大线程数   100
-        executor.setMaxPoolSize(54);
+        executor.setMaxPoolSize(59);
         //队列中最大的数目    35
         executor.setQueueCapacity(18);
         //设置线程优先级
@@ -100,7 +100,7 @@ public class TheardConfig implements AsyncConfigurer {
     //要注意: 定时任务使用的线程池(ThreadPoolTaskScheduler) 和 普通任务使用的线程池(ThreadPoolTaskExecutor) 不一样!
     public ThreadPoolTaskScheduler alarmTaskScheduler(){
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        //只管着定时任务的发放,10个定时任务线程足够了
+        //只管着定时任务的发放,5个定时任务线程足够了
         scheduler.setPoolSize(5);
         scheduler.setThreadNamePrefix("alarmSchedulerTask-");
         scheduler.setAwaitTerminationSeconds(1800);//定时任务线程的最大等待时间30分钟

@@ -16,7 +16,6 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import sun.misc.Unsafe;
 
 import javax.annotation.Resource;
 import java.util.*;

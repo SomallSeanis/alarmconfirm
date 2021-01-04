@@ -2,15 +2,15 @@
 #  port: 8082
 #spring:
 #  application:
-#    name: alarm-confirm
+#    name: alarm-confirm-odd
 #  datasource:
 #    hikari:
-#      jdbc-url: jdbc:sqlserver://sql.crias.com;DatabaseName=Alarm
+#      jdbc-url: jdbc:sqlserver://alarm.crias.com;DatabaseName=Alarm
 #      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 #      username: sa
 #      password: 1IllI1|1Il
-#      minimum-idle: 29
-#      maximum-pool-size: 58
+#      minimum-idle: 18
+#      maximum-pool-size: 36
 #      auto-commit: true
 #      idle-timeout: 0
 #      pool-name: DatebookHikariCP
@@ -29,56 +29,56 @@
 #    timeout: 5000
 #
 #    # 自定义本地redis单机版配置（超超redis密码）
-#    local:
-#      host: 127.0.0.1
-#      port: 6379
-#      password: 123456
+##    local:
+##      host: 127.0.0.1
+##      port: 6379
+##      password: 123456
 #
 #  #============== kafka ===================
-#  kafka:
-#    # 指定kafka server的地址，集群配多个，中间，逗号隔开  #10.28.3.51:9092,10.28.3.52:9092,10.28.3.53:9092
-#    bootstrap-servers: 10.50.198.21:9092,10.50.198.22:9092,10.50.198.23:9092,10.50.198.24:9092,10.50.198.25:9092,10.50.198.26:9092,10.50.198.27:9092,10.50.198.28:9092,10.50.198.29:9092,10.50.198.30:9092,10.50.198.31:9092,10.50.198.32:9092,10.50.198.33:9092,10.50.198.34:9092
-#    #=============== consumer  =======================
-#    consumer:
-#      ## 指定默认消费者group id --> 由于在kafka中，同一组中的consumer不会读取到同一个消息，依靠groud.id设置组名
-#      group-id: alarmconfirm
-#      #  # smallest和largest才有效，如果smallest重新0开始读取，如果是largest从logfile的offset读取。一般情况下我们都是设置smallest
-#      auto-offset-reset: latest
-#      #  # enable.auto.commit:true --> 设置自动提交offset
-#      #是否开启自动提交
-#      enable-auto-commit: true
-#      #  #如果'enable.auto.commit'为true，则消费者偏移自动提交给Kafka的频率（以毫秒为单位），默认值为5000。
-#      #自动提交时间间隔,这种直接拉到数据就提交,容易丢数据.  //默认值是5000ms(5s)
-#      auto-commit-interval: 5000
-#      #  # 指定消息key和消息体的编解码方式
-#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-#      #批量一次最大拉取数据量
-#      max-poll-records: 3000
-#
-#      #Consumer进程和Consumer Group 维持关系时, 如果超过 session-timeout ms 时间没有产生心跳到coordinator, 则会认为该consumer已经退出,他所订阅的partition会分配到同一group内的其他consumer上.  --> 这个过程称为rebalance
-#      session-timeout: 10000   # 默认值是10000ms --> 10s
-#
-#    #=============== provider  =======================
-#    producer:
-#      # 写入失败时，重试次数。当leader节点失效，一个repli节点会替代成为leader节点，此时可能出现写入失败，
-#      # 当retris为0时，produce不会重复。retirs重发，此时repli节点完全成为leader节点，不会产生消息丢失
-#
-#      #当写入失败时的重试次数
-#      retries: 0
-#      #批量发送的消息数量  --> 发送往同一个分区的batch-size满了之后, --> producer才会把消息发送出去
-#      batch-size: 16384
-#      #producer 请求如果没有填满batch, 也不能不发送,这个设置就是如果producer未填满batch-size, 5ms 过去了也照样会发送.
-#      linger: 5
-#
-#      ## 指定消息key和消息体的编解码方式
-#      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-#      ##acks = 0 如果设置为零，则生产者将不会等待来自服务器的任何确认，该记录将立即添加到套接字缓冲区并视为已发送。在这种情况下，无法保证服务器已收到记录，并且重试配置将不会生效（因为客户端通常不会知道任何故障），为每条记录返回的偏移量始终设置为-1。
-#      ##acks = 1 这意味着leader会将记录写入其本地日志，但无需等待所有副本服务器的完全确认即可做出回应，在这种情况下，如果leader在确认记录后立即失败，但在将数据复制到所有的副本服务器之前，则记录将会丢失。
-#      ##acks = all 这意味着leader将等待完整的同步副本集以确认记录，这保证了只要至少一个同步副本服务器仍然存活，记录就不会丢失，这是最强有力的保证，这相当于acks = -1的设置。
-#      ##可以设置的值为：all, -1, 0, 1
-#      acks: 1
+##  kafka:
+##    # 指定kafka server的地址，集群配多个，中间，逗号隔开  #10.28.3.51:9092,10.28.3.52:9092,10.28.3.53:9092
+##    bootstrap-servers: 10.50.198.21:9092,10.50.198.22:9092,10.50.198.23:9092,10.50.198.24:9092,10.50.198.25:9092,10.50.198.26:9092,10.50.198.27:9092,10.50.198.28:9092,10.50.198.29:9092,10.50.198.30:9092,10.50.198.31:9092,10.50.198.32:9092,10.50.198.33:9092,10.50.198.34:9092
+##    #=============== consumer  =======================
+##    consumer:
+##      ## 指定默认消费者group id --> 由于在kafka中，同一组中的consumer不会读取到同一个消息，依靠groud.id设置组名
+##      group-id: alarmconfirm
+##      #  # smallest和largest才有效，如果smallest重新0开始读取，如果是largest从logfile的offset读取。一般情况下我们都是设置smallest
+##      auto-offset-reset: latest
+##      #  # enable.auto.commit:true --> 设置自动提交offset
+##      #是否开启自动提交
+##      enable-auto-commit: true
+##      #  #如果'enable.auto.commit'为true，则消费者偏移自动提交给Kafka的频率（以毫秒为单位），默认值为5000。
+##      #自动提交时间间隔,这种直接拉到数据就提交,容易丢数据.  //默认值是5000ms(5s)
+##      auto-commit-interval: 5000
+##      #  # 指定消息key和消息体的编解码方式
+##      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+##      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+##      #批量一次最大拉取数据量
+##      max-poll-records: 3000
+##
+##      #Consumer进程和Consumer Group 维持关系时, 如果超过 session-timeout ms 时间没有产生心跳到coordinator, 则会认为该consumer已经退出,他所订阅的partition会分配到同一group内的其他consumer上.  --> 这个过程称为rebalance
+##      session-timeout: 10000   # 默认值是10000ms --> 10s
+##
+##    #=============== provider  =======================
+##    producer:
+##      # 写入失败时，重试次数。当leader节点失效，一个repli节点会替代成为leader节点，此时可能出现写入失败，
+##      # 当retris为0时，produce不会重复。retirs重发，此时repli节点完全成为leader节点，不会产生消息丢失
+##
+##      #当写入失败时的重试次数
+##      retries: 0
+##      #批量发送的消息数量  --> 发送往同一个分区的batch-size满了之后, --> producer才会把消息发送出去
+##      batch-size: 16384
+##      #producer 请求如果没有填满batch, 也不能不发送,这个设置就是如果producer未填满batch-size, 5ms 过去了也照样会发送.
+##      linger: 5
+##
+##      ## 指定消息key和消息体的编解码方式
+##      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+##      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+##      ##acks = 0 如果设置为零，则生产者将不会等待来自服务器的任何确认，该记录将立即添加到套接字缓冲区并视为已发送。在这种情况下，无法保证服务器已收到记录，并且重试配置将不会生效（因为客户端通常不会知道任何故障），为每条记录返回的偏移量始终设置为-1。
+##      ##acks = 1 这意味着leader会将记录写入其本地日志，但无需等待所有副本服务器的完全确认即可做出回应，在这种情况下，如果leader在确认记录后立即失败，但在将数据复制到所有的副本服务器之前，则记录将会丢失。
+##      ##acks = all 这意味着leader将等待完整的同步副本集以确认记录，这保证了只要至少一个同步副本服务器仍然存活，记录就不会丢失，这是最强有力的保证，这相当于acks = -1的设置。
+##      ##可以设置的值为：all, -1, 0, 1
+##      acks: 1
 #  cloud:
 #    nacos:
 #      discovery:

@@ -9,7 +9,7 @@ import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
+//import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
@@ -53,12 +53,12 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
 
     @Override
     public void getAlarmRuleLists() {
-        for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
+        for (int i = 1; i <= BusinessConstants.STATION_COUNT; i=i+2) { //1,3,5,7
             //将station ID为32替换为39
-            if(i == 32){
-                alarmTaskService.getAlarmRuleListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
-                continue;
-            }
+//            if(i == 32){
+//                alarmTaskService.getAlarmRuleListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
+//                continue;
+//            }
             alarmTaskService.getAlarmRuleListByStationId(i);
         }
     }
@@ -113,21 +113,28 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         String nowtime = SS_FORMATTER.format(LocalDateTime.now(ZoneId.of("Asia/Shanghai"))) + " +08:00";
         String sql = "update AlarmRealTimeInfoes set AlarmStatus =1 from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
         //这个不加的话 sqlServer会报错 --> 产生死锁问题
-        log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
+        log.info("没有进synchronized,updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
         String selectSql = "select Id from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
         synchronized (this) {
             //解析ID
+            log.info("我进到锁对象里面来了，我是"+Thread.currentThread().getName());
+            long start = System.currentTimeMillis();
             queryForList = jdbcHikariTemplate.queryForList(selectSql);
             String needUpdate = environment.getProperty("needUpdate");
+            log.info("needUpdate的值为"+needUpdate);
+            int update = -1;
             if ("true".equals(needUpdate)) {
-            log.info("updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
-            jdbcHikariTemplate.update(sql);
-             }
+            log.info("已经进入synchronized,updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
+                 update = jdbcHikariTemplate.update(sql);
+            }
+            long end = System.currentTimeMillis();
+            log.info(Thread.currentThread().getName()+"进入到锁里面的执行时间为"+(end - start)+"ms"+"这个线程要复归的站是"+stationId+"要复归的点是"+pointId+"并且他影响记录的行数是"+update);
         }
         if(queryForList==null ||queryForList.size()==0){return;}
         String insertSql = "insert into AlarmComments (CommentTime,Person,AlarmRealTimeInfo_Id,CommentDetail) VALUES ";
         for (int i = 0; i < queryForList.size(); i++) {
             String id = String.valueOf(queryForList.get(i).get("Id"));
+           // log.info("插入alarmComments的站有"+queryForList.get(i).get("StationId")+"复归成功的点是"+queryForList.get(i).get("PointId"));
             if (i == queryForList.size() - 1) {
                 insertSql += "('" + nowtime + "','AlarmReset','" + id + "','告警复归');";
                 break;

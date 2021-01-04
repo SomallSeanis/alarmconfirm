@@ -29,11 +29,11 @@ public class AlarmRealTimeInfosServiceImpl implements AlarmRealTimeInfosService 
 
     @Override
     public void getAlarmLists() {
-        for (int i = 1; i <= BusinessConstants.STATION_COUNT; i++) {
-            if(i == 32){
-                alarmTaskService.getAlarmListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
-                continue;
-            }
+        for (int i = 1; i <= BusinessConstants.STATION_COUNT; i=i+2) {//1,3,5,7....规则表
+//            if(i == 32){
+//                alarmTaskService.getAlarmListByStationId(BusinessConstants.StationId.DA_YANG_TIAN_CHE_LIANG_DUAN);
+//                continue;
+//            }
             alarmTaskService.getAlarmListByStationId(i);
 
         }

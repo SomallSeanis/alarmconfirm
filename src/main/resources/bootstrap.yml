@@ -14,10 +14,10 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: 10.50.235.38:8848
+        server-addr: 10.47.99.27:8848
         #server-addr: 10.50.238.241:8848,10.50.238.242:8848
       config:
-        server-addr: 10.50.235.38:8848
+        server-addr: 10.47.99.27:8848
         #server-addr: 10.50.238.241:8848,10.50.238.242:8848
         # 当多个微服务中有相同的配置，调用同一个dataId时，dataId配置格式为${prefix}-${spring.profile.active}.${file-extension}
         # prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix来配置

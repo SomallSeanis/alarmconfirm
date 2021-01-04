@@ -57,7 +57,6 @@ public class StringRedisTemplateUtil {
                         return null;
                     }
                 });
-        log.info("Redis查询出的内容为"+redisResult);
         return redisResult;
     }
 
