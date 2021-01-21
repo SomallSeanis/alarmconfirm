@@ -23,3 +23,10 @@ spring:
         # prefix 默认为 spring.application.name 的值，也可以通过配置项 spring.cloud.nacos.config.prefix来配置
         prefix: alarm-confirm
         file-extension: yaml
+#定时清理日志需要加的内容
+logging:
+  level:
+    com.ucd.alarm.confirm.*: INFO
+  file:
+    path: /home/alarmHistory
+    name: odd_station

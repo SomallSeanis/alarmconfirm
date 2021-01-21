@@ -3,6 +3,7 @@ package com.ucd.alarm.confirm.service.impl;
 import com.ucd.alarm.confirm.constants.BusinessConstants;
 import com.ucd.alarm.confirm.entity.AlarmRealTimeInfos;
 import com.ucd.alarm.confirm.entity.AlarmRule;
+import com.ucd.alarm.confirm.entity.StationAlarmSyncEntity;
 import com.ucd.alarm.confirm.service.AlarmRuleService;
 import com.ucd.alarm.confirm.threadtask.AlarmTaskService;
 import com.ucd.alarm.confirm.utils.MemoryCacheUtils;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
@@ -41,6 +43,10 @@ import java.util.stream.Collectors;
 @Repository
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AlarmRuleServiceImpl implements AlarmRuleService {
+
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
     @Qualifier("jdbcHikariTemplate")
     private final JdbcTemplate jdbcHikariTemplate;
@@ -116,19 +122,18 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         log.info("没有进synchronized,updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
         String selectSql = "select Id from AlarmRealTimeInfoes as A INNER join AlarmRule as B on A.AlarmRuleId =B.EntityId left join AlarmLevels as C on C.EntityId = A.AlarmLevel_EntityId where A.StationId=" + stationId + " and A.PointId= " + pointId + " and B.alarmType=" + alarmType + " and A.AlarmStatus=0 and C.[Order]<= " + order + " and A.AlarmDateTime<=" + time;
         synchronized (this) {
-            //解析ID
-            log.info("我进到锁对象里面来了，我是"+Thread.currentThread().getName());
-            long start = System.currentTimeMillis();
-            queryForList = jdbcHikariTemplate.queryForList(selectSql);
-            String needUpdate = environment.getProperty("needUpdate");
-            log.info("needUpdate的值为"+needUpdate);
             int update = -1;
-            if ("true".equals(needUpdate)) {
-            log.info("已经进入synchronized,updateAlarmrule,stationId = " + stationId + ", alarmType = " + alarmType + ", pointId = " + pointId + ", time = " + time + ", order = " + order);
-                 update = jdbcHikariTemplate.update(sql);
+            //解析ID
+            long queryStart = System.currentTimeMillis();
+            queryForList = jdbcHikariTemplate.queryForList(selectSql);
+            long queryEnd = System.currentTimeMillis();
+            log.info(Thread.currentThread().getName()+"执行查询用的时间是"+(queryEnd - queryStart)+"ms"+"这个线程要复归的站是"+stationId+"要复归的点是"+pointId+"并且他查出来的记录条数为"+queryForList.size());
+            if(queryForList != null && queryForList.size()!=0){
+                long start = System.currentTimeMillis();
+                update = jdbcHikariTemplate.update(sql);
+                long end = System.currentTimeMillis();
+                log.info(Thread.currentThread().getName()+"执行update用的时间是"+(end - start)+"ms"+"这个线程要复归的站是"+stationId+"要复归的点是"+pointId+"并且他影响记录的行数是"+update);
             }
-            long end = System.currentTimeMillis();
-            log.info(Thread.currentThread().getName()+"进入到锁里面的执行时间为"+(end - start)+"ms"+"这个线程要复归的站是"+stationId+"要复归的点是"+pointId+"并且他影响记录的行数是"+update);
         }
         if(queryForList==null ||queryForList.size()==0){return;}
         String insertSql = "insert into AlarmComments (CommentTime,Person,AlarmRealTimeInfo_Id,CommentDetail) VALUES ";
@@ -143,10 +148,13 @@ public class AlarmRuleServiceImpl implements AlarmRuleService {
         }
 
         //插入AlarmComments
-        log.info("insertbefor");
         jdbcHikariTemplate.execute(insertSql);
-        log.info("insertafter="+insertSql);
-
+        log.info("在中心AlarmComments表中插入的sql是"+insertSql);
+        StationAlarmSyncEntity stationAlarmSyncEntity = new StationAlarmSyncEntity();
+        stationAlarmSyncEntity.setStationId(stationId);
+        stationAlarmSyncEntity.setUpdateSql(sql);
+        stationAlarmSyncEntity.setInsertSql(insertSql);
+        kafkaTemplate.send("StationAlarmSyncTopic",stationAlarmSyncEntity);
 
         Map<String, List<AlarmRealTimeInfos>> mapByStationId = MemoryCacheUtils.getMapByStationId(stationId);
         if (!ObjectUtils.isEmpty(mapByStationId) || mapByStationId.size() != 0) {
