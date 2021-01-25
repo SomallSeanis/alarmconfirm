@@ -2,7 +2,7 @@ server:
   port: 8082
 spring:
   application:
-    name: alarm-confirm-even
+    name: alarm-confirm-odd
   datasource:
     hikari:
       jdbc-url: jdbc:sqlserver://alarm.crias.com;DatabaseName=Alarm
@@ -83,4 +83,9 @@ spring:
     nacos:
       discovery:
         server-addr: 10.47.99.27:8848
-needUpdate: true
+logging:
+  level:
+    com.ucd.alarm.confirm.*: INFO
+  file:
+    path: /home/alarmHistory
+    name: odd_station
