@@ -87,5 +87,5 @@ logging:
   level:
     com.ucd.alarm.confirm.*: INFO
   file:
-    path: /home/alarmHistory
+    path: /home/alarmHistoryOdd
     name: odd_station
